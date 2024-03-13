@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<nav class="level m-5 p-5 is-fixed-top">
+    <div class="level-item">
+        <p class="subtitle is-5">
+            Filtrer par
+        </p>
+    </div>
+    <div class="level-item">
+        <div class="field has-addons">
+            <div class="control">
+                <div class="select">
+                    <select id="appellation">
+                        <option selected disabled>Appellation</option>
+                        {% for appellation in appellations %}
+                            <option>{{ appellation }}</option>
+                        {% endfor %}
+                        <option>Tous</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <div class="select">
+                    <select id="cepage">
+                        <option selected disabled>Cepage</option>
+                        {% for cepage in cepages %}
+                            <option>{{ cepage }}</option>
+                        {% endfor %}
+                        <option>Tous</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <div class="select">
+                    <select id="region">
+                        <option selected disabled>Region</option>
+                        {% for region in regions %}
+                            <option>{{ region }}</option>
+                        {% endfor %}
+                        <option>Tous</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <div class="select">
+                    <select id="famille">
+                        <option selected disabled>Famille</option>
+                        {% for famille in famillesProduits %}
+                            <option>{{ famille.getNom() }}</option>
+                        {% endfor %}
+                        <option>Tous</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <div class="select">
+                    <select id="fournisseur">
+                        <option selected disabled>Fournisseur</option>
+                        {% for fournisseur in fournisseurs %}
+                            <option>{{ fournisseur }}</option>
+                        {% endfor %}
+                        <option>Tous</option>
+                    </select>
+                </div>
+            </div>
+            <p class="control">
+                <button id="filter-button" class="button is-dark">
+                    Filtrer
+                </button>
+            </p>
+            <p class="control">
+                <button id="reset-button" class="button">
+                <i class="material-icons">refresh</i>
+                </button>
+            </p>
+        </div>
+    </div>
+</nav>
+<section id="produits" class="list columns is-multiline is-centered p-6">
+{% for produit in produits %}
+    <div class="card container m-3 column is-one-third">
+        <div class="tile is-ancestor">
+            <div class="card-image tile">
+                <figure class="image p-5">
+                    {% set randomImage = 'p-' ~ random(1, 5) ~ '.webp' %}
+                    <img class="" src="{{ asset('img/' ~ randomImage) }}" alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content tile">
+                <div class="content">
+                    <p class="title is-4">{{ produit.getNom() }}</p>
+                    <ul>
+                        <li class="appellation">
+                            <strong>Appelation:</strong> <span class="value">{{ produit.getAppellation() }} </span>
+                        </li>
+                        <li class="cepage">
+                            <strong>Cepage:</strong> <span class="value">{{ produit.getCepage() }} </span>
+                        </li>          
+                        <li class="region">
+                            <strong>Region:</strong> <span class="value">{{ produit.getRegion() }} </span>
+                        </li>
+                        <li class="famille">
+                            <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
+                        </li>
+                        <li class="fournisseur">
+                            <strong>Fournisseur:</strong> <span class="value">{{ produit.getFournisseurNom() }} </span>
+                        </li>
+                        <li class="prix">
+                            <strong>Prix:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="tile is-parent is-12">
+            <div class="tile is-child">
+                <a href="{{ path('home', {'id': produit.getId()}) }}" class="button is-dark is-medium m-2">
+                    <i class="material-icons mr-2">info</i>
+                    <span class="is-size-6">Details</span>
+                </a>
+            </div>
+            {% if app.user %}
+                <div class="tile is-child">
+                    <a href="{{ path('home', {'id': produit.getId()}) }}" class="button is-success is-medium m-2">
+                        <i class="material-icons mr-2">add_shopping_cart</i>
+                        <span class="is-size-6" >Ajouter au panier</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+</section>
+{% endblock %}

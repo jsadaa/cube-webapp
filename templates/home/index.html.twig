@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="section">            
+        <div id="carousel" class="carousel">
+            <figure class="image item-1 m-3 carousel-img">
+                <img src="{{ asset('img/home-1.png') }}" alt="Negosud" style="border-radius: 10px;">
+            </figure>
+
+            <figure class="image item-2 m-3 carousel-img">
+                <img src="{{ asset('img/home-2.png') }}" alt="Negosud" style="border-radius: 10px;">
+            </figure>
+
+            <figure class="image item-3 m-3 carousel-img">
+                <img src="{{ asset('img/home-3.png') }}" alt="Negosud" style="border-radius: 10px;">
+            </figure>
+        </div>
+        <section class="is-large section has-text-centered is-overlay">
+            <p class="title">Négociant en vin depuis 1985</p>
+            <p class="subtitle is-italic">"Le vin, c'est la vie"</p>
+            <a href="{{ path('catalogue') }}" class="button is-primary is-medium">Voir le catalogue des vins</a>
+        </section>
+    </section>
+{% endblock %}

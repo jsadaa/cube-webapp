@@ -1,17 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>{% block title %}LCE Wines{% endblock %}</title>
         {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/bulma.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('styles/bulma-carousel.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            <script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
+            <script src="{{ asset('js/bulma-carousel.min.js') }}"></script>
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="has-navbar-fixed-top">
+        <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <div class="navbar-item">
+                    <span class="material-icons" id="logo">
+                        liquor
+                    </span>
+                </div>
+                <div class="navbar-item">
+                    <h1 class="title is-4">Negosud</h1>
+                </div>
+            </div>
+
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start">
+                <a class="navbar-item" href="{{ path('home') }}">
+                    Accueil
+                </a>
+
+                <a class="navbar-item" href="{{ path('catalogue') }}">
+                    Catalogue des vins
+                </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Informations
+                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item">
+                                Qui sommes-nous ?
+                            </a>
+                            <a class="navbar-item">
+                                Nous contacter
+                            </a>
+                            <hr class="navbar-divider">
+                            <a class="navbar-item">
+                                Signaler un bug
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            {% if app.user %}
+                                <a class="button is-outlined">
+                                    <span class="material-icons mr-3">
+                                        shopping_cart
+                                    </span>
+                                    Mon panier
+                                </a>
+                                <a class="button is-light" href="">
+                                    Déconnexion
+                                </a>
+                            {% else %}
+                                <a class="button is-dark">
+                                    <strong>Inscription</strong>
+                                </a>
+                                <a class="button is-light" href="{{ path('login') }}">
+                                    Connexion
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% block body %}
+        {% endblock %}
+        <script type="module" src="{{ asset('app.js') }}"></script>
     </body>
 </html>
