@@ -25,10 +25,12 @@
                     {% if produit.estEnPromotion() %}
                         <p><strong>Promotion : <span class="tag is-danger"><i class="material-icons">local_offer</i></span></p>
                     {% endif %}
-                    <a href="{{ path('home', {'id': produit.getId()}) }}" class="button is-success is-medium m-2">
-                        <i class="material-icons mr-2">add_shopping_cart</i>
-                        <span class="is-size-6" >Ajouter au panier</span>
-                    </a>
+                    {% if app.user %}
+                        <a href="{{ path('home', {'id': produit.getId()}) }}" class="button is-success is-medium m-2">
+                            <i class="material-icons mr-2">add_shopping_cart</i>
+                            <span class="is-size-6" >Ajouter au panier</span>
+                        </a>
+                    {% endif %}
                     <a href="{{ path('catalogue') }}" class="button is-info is-medium m-2">
                         <i class="material-icons mr-2">arrow_back</i>
                         <span class="is-size-6" >Retour au catalogue</span>
