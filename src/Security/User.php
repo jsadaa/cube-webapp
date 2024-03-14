@@ -6,12 +6,37 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface
 {
+    private $id;
     private $email;
-
+    private $accessToken;
+    private $refreshToken;
     /**
      * @var list<string> The user roles
      */
     private $roles = [];
+
+    public function __construct($id, $email, $accessToken, $refreshToken)
+    {
+        $this->id = $id;
+        $this->email = $email;
+        $this->accessToken = $accessToken;
+        $this->refreshToken = $refreshToken;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
+    }
 
     public function getEmail(): ?string
     {

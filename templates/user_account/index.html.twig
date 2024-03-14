@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="section container">
+    <div class="tabs">
+        <ul>
+            <li class="is-active">
+                <a>
+                    <span class="icon is-small"><i class="material-icons">account_circle</i></span>
+                    <span>Profil</span>
+                </a>
+            </li>
+            <li>
+                <a>
+                    <span class="icon is-small"><i class="material-icons">shopping_cart</i></span>
+                    <span>Commandes</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="columns">
+        <div class="column is-4">
+            <div class="card">
+                <div class="card-image
+                ">
+                    <figure class="image is-4by3">
+                        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-left
+                        ">
+                            <figure class="image is-48x48">
+                                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">{{ client.getUsername() }}</p>
+                            <p class="subtitle is-6">{{ client.getEmail() }}</p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>Date d'inscription : <time>{{ client.getDateInscription().format('d/m/Y') }}</time></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-8">
+            <div class="card">
+                <div class="card-content">
+                    <div class="content">
+                        <h1 class="title is-4">Informations personnelles</h1>
+                        <form method="post" action="{{ path('user_account_edit') }}">
+                            <div class="field">
+                                <label class="label">Nom</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="nom" value="{{ client.getNom() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Prénom</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="prenom" value="{{ client.getPrenom() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input class="input" type="email" name="email" disabled value="{{ client.getEmail() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Téléphone</label>
+                                <div class="control">
+                                    <input class="input" type="tel" name="telephone" value="{{ client.getTelephone() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Adresse</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="adresse" value="{{ client.getAdresse() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Code postal</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="codePostal" value="{{ client.getCodePostal() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Ville</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="ville" value="{{ client.getVille() }}">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Pays</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="pays" value="{{ client.getPays() }}">
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button class="button is-link" type="submit">Enregistrer</button>
+                                </div>
+                                <div class="control">
+                                    <a href="" class="button is-danger">Supprimer le compte</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+</section>
+{% endblock %}

@@ -2,15 +2,23 @@
 
 namespace App\Security;
 
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     /**
      * Symfony calls this method if you use features like switch_user
      * or remember_me.
@@ -22,12 +30,17 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
      */
     public function loadUserByIdentifier($identifier): UserInterface
     {
-        // Load a User object from your data source or throw UserNotFoundException.
-        // The $identifier argument may not actually be a username:
-        // it is whatever value is being returned by the getUserIdentifier()
-        // method in your User class.
-        throw new \Exception('TODO: fill in loadUserByIdentifier() inside '.__FILE__);
+        // Récupérez les données de l'utilisateur stockées en session
+        $userData = $this->requestStack->getSession()->get('user');
+
+        // Assurez-vous que l'email correspond à l'identifiant recherché
+        if ($userData && $userData['email'] === $identifier) {
+            return new User($userData['id'], $userData['email'], $userData['accessToken'], $userData['refreshToken']);
+        }
+
+        throw new UserNotFoundException(sprintf('User with email "%s" not found.', $identifier));
     }
+
 
     /**
      * @deprecated since Symfony 5.3, loadUserByIdentifier() is used instead
@@ -51,12 +64,17 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     public function refreshUser(UserInterface $user): UserInterface
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Invalid user class "%s".', $user::class));
+            throw new UnsupportedUserException(sprintf('Instances de %s ne sont pas supportées.', get_class($user)));
         }
 
-        // Return a User object after making sure its data is "fresh".
-        // Or throw a UsernameNotFoundException if the user no longer exists.
-        throw new \Exception('TODO: fill in refreshUser() inside '.__FILE__);
+        // Récupérez les données de l'utilisateur stockées en session
+        $userData = $this->requestStack->getSession()->get('user');
+
+        if (!$userData) {
+            throw new UserNotFoundException('Les données de l\'utilisateur ne sont pas trouvées dans la session.');
+        }
+
+        return new User($userData['id'], $userData['email'], $userData['accessToken'], $userData['refreshToken']);
     }
 
     /**
