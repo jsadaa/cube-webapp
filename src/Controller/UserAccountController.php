@@ -65,8 +65,6 @@ class UserAccountController extends AbstractController
             throw new \Exception('Erreur lors de la modification du client . ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        return $this->render('user_account/index.html.twig', [
-            'client' => $client,
-        ]);
+        return $this->redirectToRoute('user_account');
     }
 }

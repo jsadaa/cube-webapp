@@ -79,7 +79,7 @@ class Produit
         return $this->datePeremption;
     }
 
-    public function getEnPromotion(): bool
+    public function estEnPromotion(): bool
     {
         return $this->enPromotion;
     }

@@ -37,4 +37,17 @@ class CatalogueController extends AbstractController
             'fournisseurs' => array_unique($fournisseurs),
         ]);
     }
+
+    #[Route('/catalogue/{id}', name: 'catalogue_produit')]
+    public function produit(HttpClientInterface $client, Serializer $serializer, int $id): Response
+    {
+        $response = $client->request('GET', 'http://localhost:5273/api/produits/' . $id);
+
+        /** @var Produit */
+        $produit = $serializer->deserialize($response->getContent(), 'App\Entity\Produit', 'json');
+
+        return $this->render('catalogue/produit.html.twig', [
+            'produit' => $produit,
+        ]);
+    }
 }
