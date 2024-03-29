@@ -59,7 +59,7 @@ class Facture
 
     public function getTva(): mixed
     {
-        return $this->tva;
+        return $this->tva * $this->prixHt;
     }
 
     public function getCommande(): ?Commande

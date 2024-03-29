@@ -25,14 +25,14 @@
                         <header class="card-header">
                             <p class="card-header-title">
                                 <i class="material-icons mr-3">list_alt</i>
-                                Commande du {{ commande.dateCommande|date('d/m/Y') }} [ref n° {{ commande.id }}]
+                                Commande n°{{ commande.id }} du {{ commande.dateCommande|date('d/m/Y') }}
                             </p>
                         </header>
                         <div class="card-content">
                             <div class="content">
                                 <p class="is-flex"><span class="icon"><i class="material-icons mr-2">calendar_month</i></span>Date de livraison : {{ commande.dateLivraison ? commande.dateLivraison|date('d/m/Y') : 'Non définie' }}</p>
                                 <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">info</i></span>Statut : {{ commande.statut }}</p>
-                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total }} €</p>
+                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total * 1.2 }} € TTC</p>
                             </div>
                         </div>
                         <footer class="card-footer">
@@ -41,5 +41,12 @@
                     </div>
                 </div>
             {% endfor %}
+            {% if commandes|length == 0 %}
+                <div class="column is-12">
+                    <div class="notification is-warning">
+                        Vous n'avez pas encore passé de commande.
+                    </div>
+                </div>
+            {% endif %}
         </div>
 {% endblock %}

@@ -7,6 +7,7 @@
 /var/
 /vendor/
 .vscode/
+.DS_Store
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

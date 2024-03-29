@@ -256,9 +256,24 @@ class ApiClientService
         return $commande;
     }
 
-    public function getFacture(int $id) : Facture
+    public function getFactureParCommande(int $id) : Facture
     {
         $response = $this->client->request('GET', $this->baseUrl . '/factures/commandes/' . $id);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
+        }
+
+        /** @var Facture */
+        $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
+
+        return $facture;
+    }
+
+    // facture par id /api/factures/{id} GET
+    public function getFacture(int $id) : Facture
+    {
+        $response = $this->client->request('GET', $this->baseUrl . '/factures/' . $id);
 
         if (200 !== $response->getStatusCode()) {
             throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());

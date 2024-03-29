@@ -1,4 +1,88 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <section class="section">
+    <h1 class="title"><i class="material-icons mr-3" style="font-size: 25px;">local_shipping</i>Commande n°{{ commande.getId() }} du {{ commande.getDateCommande()|date('d/m/Y') }}</h1>
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <i class="material-icons mr-3">info</i>
+                    Détails
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <article class="message is-info">
+                        <div class="message-header">
+                            <p class="is-flex">
+                                <span class="icon is-small mr-3">
+                                    <i class="material-icons">receipt_long</i>
+                                </span>
+                                <span>Facturation</span>
+                            </p>
+                        </div>
+                        <div class="message-body">
+                            <p><strong>Client :</strong> {{ client.getNom() }} {{ client.getPrenom() }}</p>
+                            <p><strong>Adresse :</strong> {{ client.getAdresse() }}</p>
+                            <p><strong>Code postal :</strong> {{ client.getCodePostal() }}</p>
+                            <p><strong>Ville :</strong> {{ client.getVille() }}</p>
+                            <p><strong>Pays :</strong> {{ client.getPays() }}</p>
+                            <p><strong>Statut :</strong> {{ commande.getStatut() }}</p>
+                            <p><strong>Date de commande :</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
+                            {% if commande.getDateLivraison() is not null %}
+                                <p><strong>Date de livraison :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>
+                            {% else %}
+                                <p><strong>Date de livraison :</strong> Non définie</p>
+                            {% endif %}
+
+                        </div>
+                    </article>
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire HT</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ligne in commande.getLigneCommandeClients() %}
+                                <tr>
+                                    <td>{{ ligne.getProduit().getNom() }}</td>
+                                    <td>{{ ligne.getQuantite() }}</td>
+                                    <td>{{ ligne.getPrixUnitaire()}} €</td>
+                                    <td>{{ ligne.getTotal() * 1.2 }} €</td>
+                                </tr>
+                            {% endfor %}
+                                <tr>
+                                    <td colspan="3"><strong>Total HT</strong></td>
+                                    <td>{{ facture.getPrixHt() }} €</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3"><strong>TVA (20%)</strong></td>
+                                    <td>{{ facture.getTva() }} €</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1"><strong>Total TTC</strong></td>
+                                    <td colspan="2"><strong>{{ commande.getQuantite() }} articles</strong></td>
+                                    <td>{{ facture.getPrixTtc() }} €</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="{{ path('commande') }}" class="card-footer-item">
+                    <i class="material-icons mr-3">arrow_back</i> Retour
+                </a>
+                <a class="card-footer-item" href="{{ path('facture_pdf', {'idCommande': commande.getId(), 'idFacture': facture.getId()}) }}">
+                    <i class="material-icons mr-3">picture_as_pdf</i> Télécharger la facture
+                </a>
+            </footer>
+        </div>
+</section>
+
+
+
 {% endblock %}

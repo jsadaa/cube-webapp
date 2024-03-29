@@ -24,16 +24,21 @@ class CommandeController extends AbstractController
         ]);
     }
 
-    // commande détail
     #[Route('/commande/{id}', name: 'commande_detail')]
     public function detail(ApiClientService $apiClientService, int $id): Response
     {
+        /**
+         * @var \App\Security\User $user
+         */
+        $user = $this->getUser();
+        $client = $apiClientService->getClient($user->getId());
         $commande = $apiClientService->getCommande($id);
-        $facture = $apiClientService->getFacture($commande->getId());
+        $facture = $apiClientService->getFactureParCommande($commande->getId());
 
         return $this->render('commande/commande.html.twig', [
             'commande' => $commande,
             'facture' => $facture,
+            'client' => $client,
         ]);
     }
 }
