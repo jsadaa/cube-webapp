@@ -30,13 +30,13 @@
                         </header>
                         <div class="card-content">
                             <div class="content">
-                                <p class="is-flex"><span class"icon"><i class="material-icons mr-2">calendar_month</i></span>Date de livraison : {{ commande.dateLivraison ? commande.dateLivraison|date('d/m/Y') : 'Non définie' }}</p>
-                                <p class="is-flex"><span class"icon"><i class="material-icons-outlined mr-2">info</i></span>Statut : {{ commande.statut }}</p>
-                                <p class="is-flex"><span class"icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total }} €</p>
+                                <p class="is-flex"><span class="icon"><i class="material-icons mr-2">calendar_month</i></span>Date de livraison : {{ commande.dateLivraison ? commande.dateLivraison|date('d/m/Y') : 'Non définie' }}</p>
+                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">info</i></span>Statut : {{ commande.statut }}</p>
+                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total }} €</p>
                             </div>
                         </div>
                         <footer class="card-footer">
-                            <a href="{{ path('commande_detail') }}" class="card-footer-item"><i class="material-icons mr-3">visibility</i>Détails</a>
+                            <a href="{{ path('commande_detail', {'id': commande.id } ) }}" class="card-footer-item"><i class="material-icons mr-3">visibility</i>Détails</a>
                         </footer>
                     </div>
                 </div>
