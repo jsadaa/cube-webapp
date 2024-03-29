@@ -1,0 +1,71 @@
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../icons/MaterialIcons-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../icons/MaterialIconsOutlined-Regular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Material Icons Round';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../icons/MaterialIconsRound-Regular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Material Icons Sharp';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../icons/MaterialIconsSharp-Regular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Material Icons TwoTone';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../icons/MaterialIconsTwoTone-Regular.otf') format('opentype');
+}
+
+.material-icons {
+    font-family: 'Material Icons', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;  /* Vous pouvez changer la taille ici */
+    text-transform: none;
+    text-align: center;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+}
+
+.material-icons-outlined {
+    font-family: 'Material Icons Outlined', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 16px;  /* Vous pouvez changer la taille ici */
+    text-transform: none;
+    text-align: center;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+}
+
+.carousel-img {
+    opacity: 0.4;
+}
+
+#carousel {
+    width: 80%;
+    margin: auto;
+}
+
+#logo {
+    font-size: 24px;
+}
