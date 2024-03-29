@@ -36,7 +36,7 @@
                             </figure>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">{{ client.getUsername() }}</p>
+                            <p class="title is-4">{{ client.getPrenom() }} {{ client.getNom() }}</p>
                             <p class="subtitle is-6">{{ client.getEmail() }}</p>
                         </div>
                     </div>
@@ -100,6 +100,7 @@
                                     <input class="input" type="text" name="pays" value="{{ client.getPays() }}">
                                 </div>
                             </div>
+                            <hr>
                             <div class="field is-grouped">
                                 <div class="control">
                                     <button class="button is-link" type="submit">Enregistrer</button>

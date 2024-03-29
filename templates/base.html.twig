@@ -61,13 +61,13 @@
                     <div class="navbar-item">
                         <div class="buttons">
                             {% if app.user %}
-                                <a class="button is-outlined" href="{{ path('user_account') }}">
+                                <a class="button" href="{{ path('user_account') }}">
                                     <span class="material-icons mr-3">
                                         account_circle
                                     </span>
                                     {{ app.user.getEmail() }}
                                 </a>
-                                <a class="button is-outlined">
+                                <a class="button" href="{{ path('panier') }}">
                                     <span class="material-icons mr-3">
                                         shopping_cart
                                     </span>

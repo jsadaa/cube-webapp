@@ -20,7 +20,8 @@ class Produit
         private DateTime $datePeremption,
         private bool $enPromotion,
         private string $familleProduitNom,
-        private string $fournisseurNom
+        private string $fournisseurNom,
+        private ?Stock $stock = null
     ) {
     }
 
@@ -89,8 +90,35 @@ class Produit
         return $this->familleProduitNom;
     }
 
+    public function getNomImage(): string
+    {
+        return match ($this->familleProduitNom) {
+            'Vin rouge' => 'vin_rouge.webp',
+            'Vin blanc' => 'vin_blanc.webp',
+            'Vin rosé' => 'vin_rose.webp',
+            'Vin pétillant' => 'champagne.webp',
+            'Vin doux' => 'vin_rose_2.webp',
+            'Vin de dessert' => 'vin_rose_2.webp',
+            'Vin de glace' => 'vin_rose.webp',
+            'Vin de liqueur' => 'vin_rose.webp',
+            'Vin de fruit' => 'vin_rose_2.webp',
+            'Vin de fleur' => 'vin_rose_2.webp',
+            default => 'autres.png',
+        };
+    }
+
     public function getFournisseurNom(): string
     {
         return $this->fournisseurNom;
+    }
+
+    public function getStock(): ?Stock
+    {
+        return $this->stock;
+    }
+
+    public function setStock(Stock $stock): void
+    {
+        $this->stock = $stock;
     }
 }

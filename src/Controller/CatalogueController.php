@@ -18,6 +18,17 @@ class CatalogueController extends AbstractController
         /** @var Produit[] */
         $produits = $serializer->deserialize($response->getContent(), 'App\Entity\Produit[]', 'json');
 
+        $produits = array_map(function ($produit) use ($client, $serializer) {
+            $response = $client->request('GET', 'http://localhost:5273/api/stocks/produit/' . $produit->getId());
+
+            /** @var Stock */
+            $stock = $serializer->deserialize($response->getContent(), 'App\Entity\Stock', 'json');
+
+            $produit->setStock($stock);
+
+            return $produit;
+        }, $produits);
+
         $response = $client->request('GET', 'http://localhost:5273/api/famillesproduits');
 
         /** @var FamilleProduit[] */
@@ -45,6 +56,14 @@ class CatalogueController extends AbstractController
 
         /** @var Produit */
         $produit = $serializer->deserialize($response->getContent(), 'App\Entity\Produit', 'json');
+
+        // make a get request to http://localhost:5273/api/stocks/produit/{id} to get the stock of the product
+        $response = $client->request('GET', 'http://localhost:5273/api/stocks/produit/' . $id);
+
+        /** @var Stock */
+        $stock = $serializer->deserialize($response->getContent(), 'App\Entity\Stock', 'json');
+
+        $produit->setStock($stock);
 
         return $this->render('catalogue/produit.html.twig', [
             'produit' => $produit,

@@ -77,59 +77,71 @@
         </div>
     </div>
 </nav>
-<section id="produits" class="list columns is-multiline is-centered p-6">
-{% for produit in produits %}
-    <div class="card container m-3 column is-one-third">
-        <div class="tile is-ancestor">
-            <div class="card-image tile">
-                <figure class="image p-5">
-                    {% set randomImage = 'p-' ~ random(1, 5) ~ '.webp' %}
-                    <img class="" src="{{ asset('img/' ~ randomImage) }}" alt="Placeholder image">
-                </figure>
-            </div>
-            <div class="card-content tile">
-                <div class="content">
-                    <p class="title is-4">{{ produit.getNom() }}</p>
-                    <ul>
-                        <li class="appellation">
-                            <strong>Appelation:</strong> <span class="value">{{ produit.getAppellation() }} </span>
-                        </li>
-                        <li class="cepage">
-                            <strong>Cepage:</strong> <span class="value">{{ produit.getCepage() }} </span>
-                        </li>          
-                        <li class="region">
-                            <strong>Region:</strong> <span class="value">{{ produit.getRegion() }} </span>
-                        </li>
-                        <li class="famille">
-                            <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
-                        </li>
-                        <li class="fournisseur">
-                            <strong>Fournisseur:</strong> <span class="value">{{ produit.getFournisseurNom() }} </span>
-                        </li>
-                        <li class="prix">
-                            <strong>Prix:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
-                        </li>
-                    </ul>
+<section id="produits" class="fixed-grid has-3-cols p-6">
+    <div class="grid">
+    {% for produit in produits %}
+        <div class="card container m-3 cell">
+            <div>
+                <div class="card-image">
+                    <figure class="image p-5">
+                        <img class="" src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="Placeholder image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <p class="title is-4">{{ produit.getNom() }}</p>
+                        <ul>
+                            <li class="appellation">
+                                <strong>Appelation:</strong> <span class="value">{{ produit.getAppellation() }} </span>
+                            </li>
+                            <li class="cepage">
+                                <strong>Cepage:</strong> <span class="value">{{ produit.getCepage() }} </span>
+                            </li>          
+                            <li class="region">
+                                <strong>Region:</strong> <span class="value">{{ produit.getRegion() }} </span>
+                            </li>
+                            <li class="famille">
+                                <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
+                            </li>
+                            <li class="fournisseur">
+                                <strong>Fournisseur:</strong> <span class="value">{{ produit.getFournisseurNom() }} </span>
+                            </li>
+                            <li class="prix">
+                                <strong>Prix:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
+                            </li>
+                            <li class="stock">
+                                <strong>Statut:</strong> <span class="value">{{ produit.getStock().getStatut() }}</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="tile is-parent is-12">
-            <div class="tile is-child">
-                <a href="{{ path('catalogue_produit', {'id': produit.getId()}) }}" class="button is-dark is-medium m-2">
-                    <i class="material-icons mr-2">info</i>
-                    <span class="is-size-6">Details</span>
-                </a>
-            </div>
-            {% if app.user %}
-                <div class="tile is-child">
-                    <a href="{{ path('home', {'id': produit.getId()}) }}" class="button is-success is-medium m-2">
-                        <i class="material-icons mr-2">add_shopping_cart</i>
-                        <span class="is-size-6" >Ajouter au panier</span>
+            <hr>
+            <div class="columns m-3">
+                <div class="column is-one-third">
+                    <a href="{{ path('catalogue_produit', {'id': produit.getId()}) }}" class="button is-dark m-2">
+                        <i class="material-icons mr-2">info</i>
+                        <span class="is-size-6">Details</span>
                     </a>
                 </div>
-            {% endif %}
+                {% if app.user %}
+                    <form action="{{ path('ajouter_panier', {'id': produit.getId()}) }}" method="post">
+                        <div class="column field has-addons">
+                            <div class="control">
+                                <input type="number" name="quantite" class="input m-2" id="quantity-{{ produit.getId() }}" value="1" min="1" max="100">
+                            </div>
+                            <div class="control">
+                                <button type="submit" class="button is-success m-2">
+                                    <i class="material-icons mr-2">add_shopping_cart</i>
+                                    <span class="is-size-6">Ajouter au panier</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
         </div>
+    {% endfor %}
     </div>
-{% endfor %}
 </section>
 {% endblock %}
