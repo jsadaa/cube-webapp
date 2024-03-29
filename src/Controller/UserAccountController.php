@@ -8,23 +8,22 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
+use App\Service\ApiClientService;
 
 class UserAccountController extends AbstractController
 {
     #[Route('/user/account', name: 'user_account')]
-    public function index(HttpClientInterface $client, Serializer $serializer): Response
+    public function index(HttpClientInterface $client, Serializer $serializer, ApiClientService $apiClient): Response
     {
         /**
-         * @var \App\Entity\User $user
+         * @var \App\Security\User $user
          */
         $user = $this->getUser();
-
-        $response = $client->request('GET', 'http://localhost:5273/api/clients/' . $user->getId());
 
         /**
          * @var \App\Entity\Client $client
          */
-        $client = $serializer->deserialize($response->getContent(), 'App\Entity\Client', 'json');
+        $client = $apiClient->getClient($user->getId());
 
         return $this->render('user_account/index.html.twig', [
             'client' => $client,
@@ -33,21 +32,19 @@ class UserAccountController extends AbstractController
 
     // modifier l'utilisateur
     #[Route('/user/account/edit', name: 'user_account_edit')]
-    public function edit(HttpClientInterface $HttpClient, Serializer $serializer, Request $request): Response
+    public function edit(HttpClientInterface $HttpClient, Serializer $serializer, Request $request, ApiClientService $apiClient): Response
     {
         $data = $request->request->all();
-        
+
         /**
          * @var \App\Entity\User $user
          */
         $user = $this->getUser();
 
-        $response = $HttpClient->request('GET', 'http://localhost:5273/api/clients/' . $user->getId());
-
         /**
          * @var \App\Entity\Client $client
          */
-        $client = $serializer->deserialize($response->getContent(), 'App\Entity\Client', 'json');
+        $client = $apiClient->getClient($user->getId());
 
         $client->setNom($data['nom'] ?? $client->getNom());
         $client->setPrenom($data['prenom'] ?? $client->getPrenom());
@@ -57,13 +54,7 @@ class UserAccountController extends AbstractController
         $client->setPays($data['pays'] ?? $client->getPays());
         $client->setTelephone($data['telephone'] ?? $client->getTelephone());
 
-        $response = $HttpClient->request('PUT', 'http://localhost:5273/api/clients/' . $user->getId(), [
-            'json' => $client->toArray(),
-        ]);
-
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la modification du client . ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        $apiClient->ModifierClient($client);
 
         return $this->redirectToRoute('user_account');
     }

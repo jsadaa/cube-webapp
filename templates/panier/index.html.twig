@@ -10,21 +10,22 @@
                 <i class="material-icons mr-3">info</i>
                     Détails
                 </p>
-                <div class="card-header-icon">
-                    <a href="{{ path('supprimer_panier') }}" class="card-header-icon">
-                        <button class="delete"></button>
-                    </a>
-                </div>
             </header>
             <div class="card-content">
                 <div class="content">
                     <div class="is-flex is-justify-content-space-between">
-                        <div class="is-5">
-                            {{ panier.getNombreProduits() }} produit(s) dans le panier
-                        </div>
-                        <div class="is-5 is-flex">
-                            Prix total: {{ panier.getTotal() }} <i class="material-icons ml-1">euro_symbol</i>
-                        </div>
+                        {% if panier.getNombreProduits() > 0 %}
+                            <div class="is-5">
+                                {{ panier.getNombreProduits() }} produit(s) dans le panier
+                            </div>
+                            <div class="is-5 is-flex">
+                                Prix total: {{ panier.getTotal() }} <i class="material-icons ml-1">euro_symbol</i>
+                            </div>
+                        {% else %}
+                            <div class="is-5">
+                                Vous n'avez encore aucun produit dans le panier
+                            </div>
+                        {% endif %}
                     </div>
                     {% for ligne in panier.getLignePanierClients() %}
                     <hr>
@@ -38,7 +39,7 @@
                         </p>
                         <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Prix unitaire: {{ ligne.prixUnitaire }}</p>
                         <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Total: {{ ligne.total }}</p>
-                        <p class="is-flex"><i class="material-icons mr-3">123</i> Quantité: </p>
+                        <p class="is-flex"><i class="material-icons mr-3">123</i> Quantité: {{ ligne.quantite }}</p>
                         <div class="field is-horizontal is-flex is-align-items-center has-addons">
                             <div class="control">
                                 <input class="input" type="number" value="{{ ligne.quantite }}" name="quantite" min="1" max="100">
@@ -54,14 +55,16 @@
                     {% endfor %}
                 </div>
             </div>
-            <footer class="card-footer">
-                <a href="{{ path('vider_panier') }}" class="card-footer-item">
-                    <i class="material-icons mr-3">delete</i> Vider le panier
-                </a>
-                <a href="" class="card-footer-item">
-                    <i class="material-icons mr-3">shopping_cart</i> Passer la commande
-                </a>
-            </footer>
+            {% if panier.getNombreProduits() > 0 %}
+                <footer class="card-footer">
+                    <a href="{{ path('vider_panier') }}" class="card-footer-item">
+                        <i class="material-icons mr-3">delete</i> Vider le panier
+                    </a>
+                    <a href="" class="card-footer-item">
+                        <i class="material-icons mr-3">shopping_cart</i> Passer la commande
+                    </a>
+                </footer>
+            {% endif %}
         </div>
     {% else %}
         <div class="notification is-warning">
