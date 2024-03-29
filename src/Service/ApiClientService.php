@@ -12,6 +12,8 @@ use App\Entity\Stock;
 use App\Entity\FamilleProduit;
 use App\Entity\Client;
 use App\Entity\Panier;
+use App\Entity\Commande;
+use App\Entity\Facture;
 
 class ApiClientService
 {
@@ -214,5 +216,57 @@ class ApiClientService
         if ($response->getStatusCode() !== 200) {
             throw new \Exception('Une erreur est survenue lors de la suppression du produit du panier');
         }
+    }
+
+    public function validerPanier(int $idPanier) : void
+    {
+        $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/valider');
+
+        if ($response->getStatusCode() !== 200) {
+            throw new \Exception('Une erreur est survenue lors de la validation du panier');
+        }
+    }
+
+    // /api/commandes-clients/commande/client/{idClient} GET
+    public function getCommandesClient(int $id) : array
+    {
+        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/client/' . $id);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \Exception('Erreur lors de la récupération des commandes du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
+        }
+
+        /** @var Commande[] */
+        $commandes = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande[]', 'json');
+
+        return $commandes;
+    }
+
+    public function getCommande(int $id) : Commande
+    {
+        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/' . $id);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \Exception('Erreur lors de la récupération de la commande. ' . $response->getContent() . ' ' . $response->getStatusCode());
+        }
+
+        /** @var Commande */
+        $commande = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande', 'json');
+
+        return $commande;
+    }
+
+    public function getFacture(int $id) : Facture
+    {
+        $response = $this->client->request('GET', $this->baseUrl . '/factures/commandes/' . $id);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
+        }
+
+        /** @var Facture */
+        $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
+
+        return $facture;
     }
 }

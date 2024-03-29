@@ -5,13 +5,13 @@
     <div class="tabs">
         <ul>
             <li class="is-active">
-                <a>
+                <a href="{{ path('user_account') }}">
                     <span class="icon is-small"><i class="material-icons">account_circle</i></span>
                     <span>Profil</span>
                 </a>
             </li>
             <li>
-                <a>
+                <a href="{{ path('commande') }}">
                     <span class="icon is-small"><i class="material-icons">shopping_cart</i></span>
                     <span>Commandes</span>
                 </a>
@@ -115,6 +115,6 @@
             </div>
         </div>
     </div>
-        
+
 </section>
 {% endblock %}

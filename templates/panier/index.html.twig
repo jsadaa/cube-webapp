@@ -2,7 +2,7 @@
 
 {% block body %}
 <section class="section">
-    <h1 class="title">Mon panier</h1>
+    <h1 class="title"><i class="material-icons mr-3" style="font-size: 25px;">shopping_cart</i>Mon panier</h1>
     {% if panier is not null %}
         <div class="card">
             <header class="card-header">
@@ -16,14 +16,14 @@
                     <div class="is-flex is-justify-content-space-between">
                         {% if panier.getNombreProduits() > 0 %}
                             <div class="is-5">
-                                {{ panier.getNombreProduits() }} produit(s) dans le panier
+                                 <span class="has-text-weight-bold">{{ panier.getQuantitéTotale() }}</span> articles(s) dans le panier
                             </div>
                             <div class="is-5 is-flex">
-                                Prix total: {{ panier.getTotal() }} <i class="material-icons ml-1">euro_symbol</i>
+                                Prix total :  <span class="has-text-weight-bold">&nbsp{{ panier.getTotal() }} €</span>
                             </div>
                         {% else %}
                             <div class="is-5">
-                                Vous n'avez encore aucun produit dans le panier
+                                Votre panier est vide !
                             </div>
                         {% endif %}
                     </div>
@@ -37,10 +37,9 @@
                                 <i class="material-icons icon">info</i>
                             </a>
                         </p>
-                        <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Prix unitaire: {{ ligne.prixUnitaire }}</p>
-                        <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Total: {{ ligne.total }}</p>
-                        <p class="is-flex"><i class="material-icons mr-3">123</i> Quantité: {{ ligne.quantite }}</p>
-                        <div class="field is-horizontal is-flex is-align-items-center has-addons">
+                        <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Prix unitaire <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i> <span class="has-text-weight-medium">{{ ligne.prixUnitaire }} €</span></p>
+                        <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Total <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i><span class="has-text-weight-bold">{{ ligne.quantite }} x {{ ligne.prixUnitaire }} = {{ ligne.total }} € </span></p>
+                        <div class="field is-horizontal is-flex is-align-items-center has-addons mt-5">
                             <div class="control">
                                 <input class="input" type="number" value="{{ ligne.quantite }}" name="quantite" min="1" max="100">
                             </div>
@@ -60,7 +59,7 @@
                     <a href="{{ path('vider_panier') }}" class="card-footer-item">
                         <i class="material-icons mr-3">delete</i> Vider le panier
                     </a>
-                    <a href="" class="card-footer-item">
+                    <a href="{{ path('valider_panier') }}" class="card-footer-item">
                         <i class="material-icons mr-3">shopping_cart</i> Passer la commande
                     </a>
                 </footer>

@@ -6,7 +6,7 @@
             <h1 class="title">{{ produit.getNom() }}</h1>
             <div class="columns">
                 <div class="column is-one-third" style="max-width: 30%">
-                    <img src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="{{ produit.getNom() }}" class="image">
+                    <img src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="{{ produit.getNom() }}" class="image" style="border-radius: 10px;">
                 </div>
                 <div class="column content is-half">
                     <div class="is-flex is-align-items-center mb-5"><span class="mr-3 is-flex is-align-items-center"><i class="icon material-icons" style="font-size: 24px;">info</i></span><span class="title is-4">Fiche produit</span></div>
@@ -27,7 +27,7 @@
                         <p><strong>Promotion : <span class="tag is-danger"><i class="material-icons">local_offer</i></span></p>
                     {% endif %}
                     <hr>
-                    {% if app.user %}
+                    {% if app.user and produit.getStock().getStatut() == 'En Stock' %}
                         <form action="{{ path('ajouter_panier', {'id': produit.getId()}) }}" method="post" class="field is-horizontal is-grouped">
                             <div class="field has-addons">
                                 <div class="control">
@@ -48,6 +48,24 @@
                                 </div>
                             </div>
                         </form>
+                    {% elseif produit.getStock().getStatut() != 'En Stock' %}
+                        <a href="{{ path('catalogue') }}" class="button is-info m-2">
+                            <i class="material-icons mr-2">arrow_back</i>
+                            <span class="is-size-6" >Retour au catalogue</span>
+                        </a>
+                        <a href="" class="button is-danger m-2" disabled>
+                            <i class="material-icons mr-2">local_grocery_store</i>
+                            <span class="is-size-6" >Produit indisponible</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('catalogue') }}" class="button is-info m-2">
+                            <i class="material-icons mr-2">arrow_back</i>
+                            <span class="is-size-6" >Retour au catalogue</span>
+                        </a>
+                        <a href="{{ path('login') }}" class="button is-warning m-2">
+                            <i class="material-icons mr-2">login</i>
+                            <span class="is-size-6" >Connectez-vous pour commander</span>
+                        </a>
                     {% endif %}
                 </div>
             </div>

@@ -4,6 +4,7 @@
 <nav class="level m-5 p-5 is-fixed-top">
     <div class="level-item">
         <p class="subtitle is-5">
+         <span class="icon"><i class="material-icons">filter_list</i></span>
             Filtrer par
         </p>
     </div>
@@ -77,36 +78,41 @@
         </div>
     </div>
 </nav>
-<section id="produits" class="fixed-grid has-3-cols p-6">
-    <div class="grid">
+<section id="produits" class="fixed-grid has-2-cols py-2 px-6 has-1-cols-mobile">
+    <div class="grid ml-5 mr-5">
     {% for produit in produits %}
         <div class="card container m-3 cell">
-            <div>
-                <div class="card-image">
+            <div class="card-header">
+                <p class="card-header-title is-size-4">
+                    <i class="material-icons mr-2" style="font-size: 1.3rem;">local_bar</i>
+                    {{ produit.getNom() }}
+                </p>
+            </div>
+            <div class="is-flex card-content">
+                <div class="card-image is-flex is-justify-content-end">
                     <figure class="image p-5">
-                        <img class="" src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="Placeholder image">
+                        <img src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="Placeholder image" class="image" style="width: 12rem; border-radius: 10px;">
                     </figure>
                 </div>
-                <div class="card-content">
+                <div class="p-2">
                     <div class="content">
-                        <p class="title is-4">{{ produit.getNom() }}</p>
                         <ul>
-                            <li class="appellation">
+                            <li class="appellation mb-2">
                                 <strong>Appelation:</strong> <span class="value">{{ produit.getAppellation() }} </span>
                             </li>
-                            <li class="cepage">
+                            <li class="cepage mb-2">
                                 <strong>Cepage:</strong> <span class="value">{{ produit.getCepage() }} </span>
-                            </li>          
-                            <li class="region">
+                            </li>
+                            <li class="region mb-2">
                                 <strong>Region:</strong> <span class="value">{{ produit.getRegion() }} </span>
                             </li>
-                            <li class="famille">
+                            <li class="famille mb-2">
                                 <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
                             </li>
-                            <li class="fournisseur">
+                            <li class="fournisseur mb-2">
                                 <strong>Fournisseur:</strong> <span class="value">{{ produit.getFournisseurNom() }} </span>
                             </li>
-                            <li class="prix">
+                            <li class="prix mb-2">
                                 <strong>Prix:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
                             </li>
                             <li class="stock">
@@ -116,28 +122,29 @@
                     </div>
                 </div>
             </div>
-            <hr>
-            <div class="columns m-3">
-                <div class="column is-one-third">
-                    <a href="{{ path('catalogue_produit', {'id': produit.getId()}) }}" class="button is-dark m-2">
-                        <i class="material-icons mr-2">info</i>
-                        <span class="is-size-6">Details</span>
-                    </a>
-                </div>
-                {% if app.user %}
+            <div class="m-3 card-footer pt-3 is-flex is-justify-content-space-between">
+                <a href="{{ path('catalogue_produit', {'id': produit.getId()}) }}" class="button is-dark m-2">
+                    <i class="material-icons mr-2">info</i>
+                    <span class="is-size-6">Details</span>
+                </a>
+                {% if app.user and produit.getStock().getStatut() == 'En Stock' %}
                     <form action="{{ path('ajouter_panier', {'id': produit.getId()}) }}" method="post">
-                        <div class="column field has-addons">
+                        <div class="field has-addons">
                             <div class="control">
                                 <input type="number" name="quantite" class="input m-2" id="quantity-{{ produit.getId() }}" value="1" min="1" max="100">
                             </div>
                             <div class="control">
                                 <button type="submit" class="button is-success m-2">
-                                    <i class="material-icons mr-2">add_shopping_cart</i>
-                                    <span class="is-size-6">Ajouter au panier</span>
+                                    <i class="material-icons">add_shopping_cart</i>
                                 </button>
                             </div>
                         </div>
                     </form>
+                {% elseif produit.getStock().getStatut() != 'En Stock' %}
+                    <button class="button is-danger m-2" disabled>
+                        <i class="material-icons mr-2">remove_shopping_cart</i>
+                        <span class="is-size-6">Indisponible</span>
+                    </button>
                 {% endif %}
             </div>
         </div>

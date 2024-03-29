@@ -17,7 +17,7 @@ class PanierController extends AbstractController
     }
 
     #[Route('/panier', name: 'panier')]
-    public function index(Request $request, ApiClientService $apiClient): Response
+    public function index(ApiClientService $apiClient): Response
     {
         /** @var User */
         $user = $this->getUser();
@@ -51,7 +51,7 @@ class PanierController extends AbstractController
     }
 
     #[Route('/panier/vider', name: 'vider_panier')]
-    public function vider(Request $request, ApiClientService $apiClient): Response
+    public function vider(ApiClientService $apiClient): Response
     {
         /** @var User */
         $user = $this->getUser();
@@ -88,6 +88,60 @@ class PanierController extends AbstractController
     public function supprimerProduitPanier(int $idPanier, int $idProduit, ApiClientService $apiClient): Response
     {
         $apiClient->supprimerProduitDuPanier($idPanier, $idProduit);
+
+        return $this->redirectToRoute('panier');
+    }
+
+    //Valider le panier (visualisation)
+    #[Route('/panier/valider', name: 'valider_panier')]
+    public function validerPanier(ApiClientService $apiClient): Response
+    {
+        /** @var User */
+        $user = $this->getUser();
+        $id = $user->getId();
+
+        /** @var Client */
+        $client = $apiClient->getClient($id);
+
+        /** @var Panier|null */
+        $panier = $apiClient->getPanierClient($id);
+
+        return $this->render('panier/valider.html.twig', [
+            'panier' => $panier,
+            'client' => $client,
+        ]);
+    }
+
+    // passer la commande
+    #[Route('/panier/commander', name: 'commander_panier')]
+    public function commanderPanier(ApiClientService $apiClient, Request $request): Response
+    {
+        $data = $request->request->all();
+
+        /**
+        * @var \App\Security\User $user
+        */
+        $user = $this->getUser();
+
+        /**
+        * @var \App\Entity\Client $client
+        */
+        $client = $apiClient->getClient($user->getId());
+
+        $client->setNom($data['nom'] ?? $client->getNom());
+        $client->setPrenom($data['prenom'] ?? $client->getPrenom());
+        $client->setAdresse($data['adresse'] ?? $client->getAdresse());
+        $client->setCodePostal($data['codePostal'] ?? $client->getCodePostal());
+        $client->setVille($data['ville'] ?? $client->getVille());
+        $client->setPays($data['pays'] ?? $client->getPays());
+        $client->setTelephone($data['telephone'] ?? $client->getTelephone());
+
+        $apiClient->ModifierClient($client);
+
+        /** @var Panier|null */
+        $panier = $apiClient->getPanierClient($user->getId());
+
+        $apiClient->validerPanier($panier->getId());
 
         return $this->redirectToRoute('panier');
     }

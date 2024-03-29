@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="section container">
+        <div class="tabs">
+            <ul>
+                <li class="">
+                    <a href="{{ path('user_account') }}">
+                        <span class="icon is-small"><i class="material-icons">account_circle</i></span>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li class="is-active">
+                    <a href="{{ path('commande') }}">
+                        <span class="icon is-small"><i class="material-icons">shopping_cart</i></span>
+                        <span>Commandes</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="columns is-multiline">
+            {% for commande in commandes %}
+                <div class="column is-4">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                <i class="material-icons mr-3">list_alt</i>
+                                Commande du {{ commande.dateCommande|date('d/m/Y') }} [ref n° {{ commande.id }}]
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <p class="is-flex"><span class"icon"><i class="material-icons mr-2">calendar_month</i></span>Date de livraison : {{ commande.dateLivraison ? commande.dateLivraison|date('d/m/Y') : 'Non définie' }}</p>
+                                <p class="is-flex"><span class"icon"><i class="material-icons-outlined mr-2">info</i></span>Statut : {{ commande.statut }}</p>
+                                <p class="is-flex"><span class"icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total }} €</p>
+                            </div>
+                        </div>
+                        <footer class="card-footer">
+                            <a href="{{ path('commande_detail') }}" class="card-footer-item"><i class="material-icons mr-3">visibility</i>Détails</a>
+                        </footer>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+{% endblock %}

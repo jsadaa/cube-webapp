@@ -55,4 +55,13 @@ class Panier
     {
         return count($this->lignePanierClients);
     }
+
+    public function getQuantitéTotale(): int
+    {
+        $quantitéTotale = 0;
+        foreach ($this->lignePanierClients as $lignePanierClient) {
+            $quantitéTotale += $lignePanierClient['quantite'];
+        }
+        return $quantitéTotale;
+    }
 }
