@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="section">
+    <h1 class="title">Mon panier</h1>
+    {% if panier is not null %}
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                <i class="material-icons mr-3">info</i>
+                    Détails
+                </p>
+                <div class="card-header-icon">
+                    <a href="{{ path('supprimer_panier') }}" class="card-header-icon">
+                        <button class="delete"></button>
+                    </a>
+                </div>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    <div class="is-flex is-justify-content-space-between">
+                        <div class="is-5">
+                            {{ panier.getNombreProduits() }} produit(s) dans le panier
+                        </div>
+                        <div class="is-5 is-flex">
+                            Prix total: {{ panier.getTotal() }} <i class="material-icons ml-1">euro_symbol</i>
+                        </div>
+                    </div>
+                    {% for ligne in panier.getLignePanierClients() %}
+                    <hr>
+                    <form action="{{ path('modifier_panier', {'idPanier': panier.getId(), 'idProduit': ligne.produit.id}) }}" method="post">
+                        <p class="is-flex is-align-items-center has-text-weight-semibold is-size-5">
+                            <i class="material-icons mr-3">shopping_basket</i>
+                            <span class="">{{ ligne.produit.nom }}</span>
+                            <a href="{{ path('catalogue_produit', {'id': ligne.produit.id}) }}" class="button is-ghost">
+                                <i class="material-icons icon">info</i>
+                            </a>
+                        </p>
+                        <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Prix unitaire: {{ ligne.prixUnitaire }}</p>
+                        <p class="is-flex"><i class="material-icons mr-3">euro_symbol</i> Total: {{ ligne.total }}</p>
+                        <p class="is-flex"><i class="material-icons mr-3">123</i> Quantité: </p>
+                        <div class="field is-horizontal is-flex is-align-items-center has-addons">
+                            <div class="control">
+                                <input class="input" type="number" value="{{ ligne.quantite }}" name="quantite" min="1" max="100">
+                            </div>
+                            <div class="control">
+                                <button type="submit" class="button is-primary"><i class="material-icons">edit</i></button>
+                            </div>
+                            <div class="control">
+                                <a href="{{ path('supprimer_produit_panier', {'idPanier': panier.getId(), 'idProduit': ligne.produit.id}) }}" class="button is-danger"><i class="material-icons">delete</i> </a>
+                            </div>
+                        </div>
+                    </form>
+                    {% endfor %}
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="{{ path('vider_panier') }}" class="card-footer-item">
+                    <i class="material-icons mr-3">delete</i> Vider le panier
+                </a>
+                <a href="" class="card-footer-item">
+                    <i class="material-icons mr-3">shopping_cart</i> Passer la commande
+                </a>
+            </footer>
+        </div>
+    {% else %}
+        <div class="notification is-warning">
+            <p>Vous n'avez pas de panier</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
