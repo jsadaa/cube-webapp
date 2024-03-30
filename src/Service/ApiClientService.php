@@ -17,9 +17,9 @@ use App\Entity\Facture;
 
 class ApiClientService
 {
-    private $client;
-    private $baseUrl;
-    private $serializer;
+    private HttpClientInterface $client;
+    private string $baseUrl;
+    private SerializerInterface $serializer;
 
     public function __construct(HttpClientInterface $client, string $baseUrl, SerializerInterface $serializer)
     {
@@ -37,7 +37,7 @@ class ApiClientService
         }
 
         /**
-        * @var \App\Entity\Client $client
+        * @var Client $client
         */
         $client = $this->serializer->deserialize($response->getContent(), 'App\Entity\Client', 'json');
 
@@ -52,13 +52,25 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération du produit. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Produit */
+        /** @var Produit $produit */
         $produit = $this->serializer->deserialize($response->getContent(), 'App\Entity\Produit', 'json');
 
         $stock = $this->getStockParProduit($produit->getId());
         $produit->setStock($stock);
 
         return $produit;
+    }
+
+    // /api/clients POST
+    public function creerClient(Client $client) : void
+    {
+        $response = $this->client->request('POST', $this->baseUrl . '/clients', [
+            'json' => $client->toArrayAvecMotDePasse()
+        ]);
+
+        if (201 !== $response->getStatusCode()) {
+            throw new \Exception('Erreur lors de la création du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
+        }
     }
 
     /**
@@ -72,7 +84,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération des produits. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Produit[] */
+        /** @var Produit[] $produits */
         $produits = $this->serializer->deserialize($response->getContent(), 'App\Entity\Produit[]', 'json');
 
         $produits = array_map(function ($produit) {
@@ -93,10 +105,8 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération du stock du produit. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Stock */
-        $stock = $this->serializer->deserialize($response->getContent(), 'App\Entity\Stock', 'json');
-
-        return $stock;
+        /** @var Stock $response */
+        return $this->serializer->deserialize($response->getContent(), 'App\Entity\Stock', 'json');
     }
 
     /**
@@ -110,7 +120,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération des familles de produits . ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var FamilleProduit[] */
+        /** @var FamilleProduit[] $famillesProduits */
         $famillesProduits = $this->serializer->deserialize($response->getContent(), 'App\Entity\FamilleProduit[]', 'json');
 
         return $famillesProduits;
@@ -133,7 +143,7 @@ class ApiClientService
 
         $panier = json_decode($response->getContent(), true);
 
-        /* @var Panier */
+        /* @var Panier $panier */
         $panier = $serializer->denormalize($panier, 'App\Entity\Panier');
 
         return $panier;
@@ -159,9 +169,11 @@ class ApiClientService
 
         if ($response->getStatusCode() === 409) {
             $this->modifierUnProduitDansLePanier($idPanier, $idProduit, $quantite);
+
+            return;
         }
 
-        if ($response->getStatusCode() !== 201 && $response->getStatusCode() !== 409) {
+        if ($response->getStatusCode() !== 201) {
             throw new \Exception('Une erreur est survenue lors de l\'ajout du produit au panier');
         }
     }
@@ -236,7 +248,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération des commandes du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Commande[] */
+        /** @var Commande[] $commandes */
         $commandes = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande[]', 'json');
 
         return $commandes;
@@ -250,7 +262,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération de la commande. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Commande */
+        /** @var Commande $commande */
         $commande = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande', 'json');
 
         return $commande;
@@ -264,7 +276,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Facture */
+        /** @var Facture $facture */
         $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
 
         return $facture;
@@ -279,7 +291,7 @@ class ApiClientService
             throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
-        /** @var Facture */
+        /** @var Facture $facture */
         $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
 
         return $facture;

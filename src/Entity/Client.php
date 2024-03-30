@@ -18,8 +18,9 @@ class Client {
     private string $email;
     private DateTime $dateNaissance;
     private DateTime $dateInscription;
+    private ?string $password = null;
 
-    public function __construct(int $id, string $username, string $nom, string $prenom, string $adresse, string $codePostal, string $ville, string $pays, string $telephone, string $email, DateTime $dateNaissance, DateTime $dateInscription) {
+    public function __construct(int $id, string $username, string $nom, string $prenom, string $adresse, string $codePostal, string $ville, string $pays, string $telephone, string $email, DateTime $dateNaissance, DateTime $dateInscription, string $password = null) {
         $this->id = $id;
         $this->username = $username;
         $this->nom = $nom;
@@ -32,6 +33,7 @@ class Client {
         $this->email = $email;
         $this->dateNaissance = $dateNaissance;
         $this->dateInscription = $dateInscription;
+        $this->password = $password;
     }
 
     public function getId(): int {
@@ -129,6 +131,29 @@ class Client {
             'telephone' => $this->telephone,
             'email' => $this->email,
             'dateNaissance' => $this->dateNaissance->format('Y-m-d\TH:i:s.u\Z'),
+        ];
+    }
+
+    public function getPassword(): ?string {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): void {
+        $this->password = $password;
+    }
+
+    public function toArrayAvecMotDePasse(): array {
+        return [
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
+            'adresse' => $this->adresse,
+            'codePostal' => $this->codePostal,
+            'ville' => $this->ville,
+            'pays' => $this->pays,
+            'telephone' => $this->telephone,
+            'email' => $this->email,
+            'dateNaissance' => $this->dateNaissance->format('Y-m-d\TH:i:s.u\Z'),
+            'password' => $this->password,
         ];
     }
 }

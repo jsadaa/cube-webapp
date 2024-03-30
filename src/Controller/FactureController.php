@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\User;
 use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ class FactureController extends AbstractController
     public function telecharger(ApiClientService $apiClientService, int $idCommande, int $idFacture) : Response
     {
         /**
-         * @var \App\Security\User $user
+         * @var User $user
          */
         $user = $this->getUser();
         $client = $apiClientService->getClient($user->getId());
@@ -31,8 +32,8 @@ class FactureController extends AbstractController
         $invoice->setFrom([
             "Société Negosud",
             "123 Rue de la Paix",
-            "Paris",
             "75000",
+            "Paris",
             "France"
         ]);
 
@@ -46,13 +47,13 @@ class FactureController extends AbstractController
 
         foreach ($commande->getLigneCommandeClients() as $ligneCommandeClient) {
             $invoice->addItem(
-            $ligneCommandeClient->getProduit()->getNom(),
-            $ligneCommandeClient->getProduit()->getDescription(),
-            $ligneCommandeClient->getQuantite(),
-            $ligneCommandeClient->getTotal() * 0.2,
-            $ligneCommandeClient->getPrixUnitaire(),
-            0,
-            $ligneCommandeClient->getTotal() * 1.2
+                $ligneCommandeClient->getProduit()->getNom(),
+                $ligneCommandeClient->getProduit()->getDescription(),
+                $ligneCommandeClient->getQuantite(),
+                $ligneCommandeClient->getTotal() * 0.2,
+                $ligneCommandeClient->getPrixUnitaire(),
+                0,
+                $ligneCommandeClient->getTotal() * 1.2
             );
         }
 
@@ -67,7 +68,7 @@ class FactureController extends AbstractController
 
         $invoice->setFooternote("Merci de votre confiance.");
 
-        $invoice->render('Facture.pdf', 'D');
+        $invoice->render('Facture-' . $facture->getId() . '.pdf', 'D');
 
         return new Response();
     }
