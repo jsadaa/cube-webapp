@@ -14,6 +14,18 @@ use App\Entity\Client;
 use App\Entity\Panier;
 use App\Entity\Commande;
 use App\Entity\Facture;
+use App\Exception\ClientNonTrouve;
+use App\Exception\CommandeNonTrouvee;
+use App\Exception\ErreurApi;
+use App\Exception\FactureNonTrouvee;
+use App\Exception\FormatMotDePasseInvalide;
+use App\Exception\ProduitNonTrouve;
+use App\Exception\QuantitePanierInvalide;
+use App\Exception\StockNonTrouve;
+use App\Exception\UtilisateurExisteDeja;
+use App\Exception\PanierNonTrouve;
+use App\Exception\ProduitNonPresentDansPanier;
+use App\Exception\QuantiteStockInsuffisante;
 
 class ApiClientService
 {
@@ -28,13 +40,21 @@ class ApiClientService
         $this->serializer = $serializer;
     }
 
-    public function getClient(int $id) : Client
+    /**
+     * @param int $idClient
+     * @return Client
+     * @throws ClientNonTrouve
+     * @throws ErreurApi
+     */
+    public function getClient(int $idClient) : Client
     {
-        $response = $this->client->request('GET', 'http://localhost:5273/api/clients/' . $id);
+        $response = $this->client->request('GET', 'http://localhost:5273/api/clients/' . $idClient);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new ClientNonTrouve('Le client n\'existe pas.'),
+            default => throw new ErreurApi('Erreur lors de la récupération du client. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /**
         * @var Client $client
@@ -44,13 +64,22 @@ class ApiClientService
         return $client;
     }
 
-    public function getProduit(int $id) : Produit
+    /**
+     * @param int $idProduit
+     * @return Produit
+     * @throws ProduitNonTrouve
+     * @throws StockNonTrouve
+     * @throws ErreurApi
+     */
+    public function getProduit(int $idProduit) : Produit
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/produits/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/produits/' . $idProduit);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération du produit. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new ProduitNonTrouve('Le produit n\'existe pas.'),
+            default => throw new ErreurApi('Erreur lors de la récupération du produit. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Produit $produit */
         $produit = $this->serializer->deserialize($response->getContent(), 'App\Entity\Produit', 'json');
@@ -61,28 +90,41 @@ class ApiClientService
         return $produit;
     }
 
-    // /api/clients POST
+    /**
+     * @param Client $client
+     * @return void
+     * @throws FormatMotDePasseInvalide
+     * @throws UtilisateurExisteDeja
+     * @throws ErreurApi
+     */
     public function creerClient(Client $client) : void
     {
         $response = $this->client->request('POST', $this->baseUrl . '/clients', [
             'json' => $client->toArrayAvecMotDePasse()
         ]);
 
-        if (201 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la création du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            201 => null,
+            400 => throw new FormatMotDePasseInvalide(),
+            409 => throw new UtilisateurExisteDeja(),
+            default => throw new ErreurApi('Erreur lors de la création du client. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
     /**
      * @return Produit[]
+     * @throws ProduitNonTrouve
+     * @throws StockNonTrouve
+     * @throws ErreurApi
      */
     public function getProduits() : array
     {
         $response = $this->client->request('GET', $this->baseUrl . '/produits');
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération des produits. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            default => throw new ErreurApi('Erreur lors de la récupération des produits. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Produit[] $produits */
         $produits = $this->serializer->deserialize($response->getContent(), 'App\Entity\Produit[]', 'json');
@@ -97,28 +139,38 @@ class ApiClientService
         return $produits;
     }
 
-    public function getStockParProduit(int $id) : Stock
+    /**
+     * @param int $idProduit
+     * @return Stock
+     * @throws StockNonTrouve
+     * @throws ProduitNonTrouve
+     * @throws ErreurApi
+     */
+    public function getStockParProduit(int $idProduit) : Stock
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/stocks/produit/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/stocks/produit/' . $idProduit);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération du stock du produit. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => $response->toArray()['code'] === 'stock_introuvable' ? throw new StockNonTrouve() : throw new ProduitNonTrouve(),
+            default => throw new ErreurApi('Erreur lors de la récupération du stock. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
-        /** @var Stock $response */
         return $this->serializer->deserialize($response->getContent(), 'App\Entity\Stock', 'json');
     }
 
     /**
      * @return FamilleProduit[]
+     * @throws ErreurApi
      */
     public function getFamillesProduits() : array
     {
         $response = $this->client->request('GET', $this->baseUrl . '/famillesproduits');
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération des familles de produits . ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            default => throw new ErreurApi('Erreur lors de la récupération des familles de produits. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var FamilleProduit[] $famillesProduits */
         $famillesProduits = $this->serializer->deserialize($response->getContent(), 'App\Entity\FamilleProduit[]', 'json');
@@ -126,19 +178,35 @@ class ApiClientService
         return $famillesProduits;
     }
 
-    public function getPanierClient(int $id) : ?Panier
+    /**
+     * @param int $idClient
+     * @return Panier
+     * @throws ClientNonTrouve
+     * @throws ErreurApi
+     */
+    public function getPanierClient(int $idClient) : Panier
     {
-        $response = $this->client->request('GET',  $this->baseUrl . '/commandes-clients/panier/client/' . $id);
+        $response = $this->client->request('GET',  $this->baseUrl . '/commandes-clients/panier/client/' . $idClient);
 
         $serializer = new Serializer([new ObjectNormalizer(null, null, null, new ReflectionExtractor())]);
 
-        if ($response->getStatusCode() === 404) {
-            $this->creerPanierClient($id);
-            $response = $this->client->request('GET',  $this->baseUrl . '/commandes-clients/panier/client/' . $id);
+        switch ($response->getStatusCode()) {
+            case 200:
+                break;
+            case 404:
+                if ($response->toArray()['code'] === 'panier_introuvable') {
+                    $this->creerPanierClient($idClient);
+                    $response = $this->client->request('GET',  $this->baseUrl . '/commandes-clients/panier/client/' . $idClient);
 
-            if (200 !== $response->getStatusCode()) {
-                throw new \Exception('Erreur lors de la récupération du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
-            }
+                    if ($response->getStatusCode() !== 200) {
+                        throw new ErreurApi('Erreur lors de la récupération du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
+                    }
+                } else {
+                    throw new ClientNonTrouve();
+                }
+                break;
+            default:
+                throw new ErreurApi('Erreur lors de la récupération du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
 
         $panier = json_decode($response->getContent(), true);
@@ -149,15 +217,34 @@ class ApiClientService
         return $panier;
     }
 
-    public function creerPanierClient(int $id) : void
+    /**
+     * @param int $idClient
+     * @return void
+     * @throws ClientNonTrouve
+     * @throws ErreurApi
+     */
+    public function creerPanierClient(int $idClient) : void
     {
-        $response = $this->client->request('POST',  $this->baseUrl . '/commandes-clients/panier/' . $id);
+        $response = $this->client->request('POST',  $this->baseUrl . '/commandes-clients/panier/' . $idClient);
 
-        if (201 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la création du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            201 => null,
+            404 => throw new ClientNonTrouve(),
+            default => throw new ErreurApi('Erreur lors de la création du panier. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
+    /**
+    * @param int $idPanier
+    * @param int $idProduit
+    * @param int $quantite
+    * @return void
+    * @throws QuantitePanierInvalide
+    * @throws ProduitNonTrouve
+    * @throws PanierNonTrouve
+    * @throws ClientNonTrouve
+    * @throws ErreurApi
+    */
     public function ajouterProduitAuPanier(int $idPanier, int $idProduit, int $quantite) : void
     {
         $response = $this->client->request('POST', $this->baseUrl . '/commandes-clients/panier/' . $idPanier. '/produit', [
@@ -167,17 +254,29 @@ class ApiClientService
             ]
         ]);
 
-        if ($response->getStatusCode() === 409) {
-            $this->modifierUnProduitDansLePanier($idPanier, $idProduit, $quantite);
-
-            return;
-        }
-
-        if ($response->getStatusCode() !== 201) {
-            throw new \Exception('Une erreur est survenue lors de l\'ajout du produit au panier');
-        }
+        match ($response->getStatusCode()) {
+            201 => null,
+            400 => throw new QuantitePanierInvalide(),
+            404 => $response->toArray()['code'] === 'produit_introuvable'
+                ? throw new ProduitNonTrouve()
+                : ($response->toArray()['code'] === 'panier_introuvable'
+                    ? throw new PanierNonTrouve()
+                    : throw new ClientNonTrouve()),
+            409 => $this->modifierUnProduitDansLePanier($idPanier, $idProduit, $quantite),
+            default => throw new ErreurApi('Erreur lors de l\'ajout du produit au panier. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
+    /**
+    * @param int $idPanier
+    * @param int $idProduit
+    * @param int $quantite
+    * @return void
+    * @throws QuantitePanierInvalide
+    * @throws ProduitNonTrouve
+    * @throws PanierNonTrouve
+    * @throws ErreurApi
+    */
     public function modifierUnProduitDansLePanier(int $idPanier, int $idProduit, int $quantite) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/produit', [
@@ -187,66 +286,136 @@ class ApiClientService
             ]
         ]);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Une erreur est survenue lors de la modification du produit du panier');
-        }
+       match ($response->getStatusCode()) {
+            200 => null,
+            400 => throw new QuantitePanierInvalide(),
+            404 => $response->toArray()['code'] === 'produit_introuvable'
+                ? throw new ProduitNonTrouve()
+                : throw new PanierNonTrouve(),
+            default => throw new ErreurApi('Erreur lors de la modification du produit dans le panier. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
+    /**
+    * @param int $idPanier
+    * @param int $idProduit
+    * @return void
+    * @throws ProduitNonPresentDansPanier
+    * @throws PanierNonTrouve
+    * @throws ErreurApi
+    */
     public function supprimerProduitDuPanier(int $idPanier, int $idProduit) : void
     {
         $response = $this->client->request('DELETE', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/produit/' . $idProduit);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Une erreur est survenue lors de la suppression du produit du panier');
+        switch ($response->getStatusCode()) {
+            case 200:
+                break;
+            case 404:
+                if ($response->toArray()['code'] === 'produit_introuvable') {
+                    throw new ProduitNonTrouve();
+                } else if ($response->toArray()['code'] === 'produit_non_present_dans_panier') {
+                    throw new ProduitNonPresentDansPanier();
+                } else {
+                    throw new PanierNonTrouve();
+                }
+                break;
+            default:
+                throw new ErreurApi('Erreur lors de la suppression du produit du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
     }
 
+    /**
+    * @param Client $client
+    * @return void
+    * @throws FormatMotDePasseInvalide
+    * @throws ClientNonTrouve
+    * @throws UtilisateurExisteDeja
+    * @throws ErreurApi
+    */
     public function ModifierClient(Client $client) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/clients/' . $client->getId(), [
             'json' => $client->toArray()
         ]);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la modification du client . ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            400 => throw new FormatMotDePasseInvalide(),
+            404 => throw new ClientNonTrouve(),
+            409 => throw new UtilisateurExisteDeja(),
+            default => throw new ErreurApi('Erreur lors de la modification du client. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
+    /**
+    * @param int $idPanier
+    * @return void
+    * @throws PanierNonTrouve
+    * @throws ErreurApi
+    */
     public function ViderUnPanier(int $idPanier) : void
     {
         $response = $this->client->request('DELETE', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/vider');
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Une erreur est survenue lors de la suppression des produits du panier');
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new PanierNonTrouve(),
+            default => throw new ErreurApi('Erreur lors de la suppression du produit du panier. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 
-    public function supprimerPanierClient(int $idUser) : void
-    {
-        $response = $this->client->request('DELETE', $this->baseUrl . '/commandes-clients/panier/' . $idUser);
-
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Une erreur est survenue lors de la suppression du produit du panier');
-        }
-    }
-
+    /**
+    * @param int $idPanier
+    * @return void
+    * @throws PanierNonTrouve
+    * @throws ClientNonTrouve
+    * @throws ProduitNonTrouve
+    * @throws StockNonTrouve
+    * @throws QuantiteStockInsuffisante
+    * @throws ErreurApi
+    */
     public function validerPanier(int $idPanier) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/valider');
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Une erreur est survenue lors de la validation du panier');
+        switch ($response->getStatusCode()) {
+            case 200:
+                break;
+            case 400:
+                throw new QuantiteStockInsuffisante();
+            case 404:
+                if ($response->toArray()['code'] === 'panier_introuvable') {
+                    throw new PanierNonTrouve();
+                } else if ($response->toArray()['code'] === 'produit_introuvable') {
+                    throw new ProduitNonTrouve();
+                } else if ($response->toArray()['code'] === 'client_introuvable') {
+                    throw new ClientNonTrouve();
+                } else if ($response->toArray()['code'] === 'stock_introuvable') {
+                    throw new StockNonTrouve();
+                } else {
+                    throw new ErreurApi('Erreur lors de la validation du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
+                }
+            default:
+                throw new ErreurApi('Erreur lors de la validation du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
     }
 
-    // /api/commandes-clients/commande/client/{idClient} GET
-    public function getCommandesClient(int $id) : array
+    /**
+    * @param int $idPanier
+    * @return Commande[]
+    * @throws ClientNonTrouve
+    * @throws ErreurApi
+    */
+    public function getCommandesClient(int $idClient) : array
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/client/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/client/' . $idClient);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération des commandes du client. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new ClientNonTrouve(),
+            default => throw new ErreurApi('Erreur lors de la récupération des commandes du client. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Commande[] $commandes */
         $commandes = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande[]', 'json');
@@ -254,13 +423,21 @@ class ApiClientService
         return $commandes;
     }
 
-    public function getCommande(int $id) : Commande
+    /**
+    * @param int $idCommande
+    * @return Commande
+    * @throws CommandeNonTrouvee
+    * @throws ErreurApi
+    */
+    public function getCommande(int $idCommande) : Commande
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/' . $idCommande);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération de la commande. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new CommandeNonTrouvee(),
+            default => throw new ErreurApi('Erreur lors de la récupération de la commande. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Commande $commande */
         $commande = $this->serializer->deserialize($response->getContent(), 'App\Entity\Commande', 'json');
@@ -268,13 +445,22 @@ class ApiClientService
         return $commande;
     }
 
-    public function getFactureParCommande(int $id) : Facture
+    /**
+    * @param int $idCommande
+    * @return Facture
+    * @throws CommandeNonTrouvee
+    * @throws FactureNonTrouvee
+    * @throws ErreurApi
+    */
+    public function getFactureParCommande(int $idCommande) : Facture
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/factures/commandes/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/factures/commandes/' . $idCommande);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => $response->toArray()['code'] === 'commande_introuvable' ? throw new CommandeNonTrouvee() : throw new FactureNonTrouvee(),
+            default => throw new ErreurApi('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Facture $facture */
         $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
@@ -282,14 +468,21 @@ class ApiClientService
         return $facture;
     }
 
-    // facture par id /api/factures/{id} GET
-    public function getFacture(int $id) : Facture
+    /**
+    * @param int $idFacture
+    * @return Facture
+    * @throws FactureNonTrouvee
+    * @throws ErreurApi
+    */
+    public function getFacture(int $idFacture) : Facture
     {
-        $response = $this->client->request('GET', $this->baseUrl . '/factures/' . $id);
+        $response = $this->client->request('GET', $this->baseUrl . '/factures/' . $idFacture);
 
-        if (200 !== $response->getStatusCode()) {
-            throw new \Exception('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode());
-        }
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new FactureNonTrouvee(),
+            default => throw new ErreurApi('Erreur lors de la récupération de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
 
         /** @var Facture $facture */
         $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');

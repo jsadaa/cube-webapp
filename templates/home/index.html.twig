@@ -21,4 +21,13 @@
             <a href="{{ path('catalogue') }}" class="button is-primary">Voir le catalogue des vins</a>
         </section>
     </section>
+    {% if error is defined and error %}
+        <div class="notification is-danger" style="position: absolute; top: 2rem; right: 2rem; z-index: 1000; max-width: 320px;">
+            <button class="delete"></button>
+            <h3 class="title is-4">Erreur</h3>
+            <div class="content">
+                {{ error }}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

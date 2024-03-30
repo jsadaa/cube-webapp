@@ -41,3 +41,19 @@ $('#reset-button').click(function() {
     $('#fournisseur').val($('#fournisseur option:disabled').val());
     $('.card').show();
 });
+
+//document.addEventListener('DOMContentLoaded', () => {
+//  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+//    const $notification = $delete.parentNode;
+//
+//    $delete.addEventListener('click', () => {
+//      $notification.parentNode.removeChild($notification);
+//    });
+//  });
+//});
+
+$(document).ready(function () {
+    $('.notification .delete').click(function() {
+        $(this).parent().hide();
+    });
+});

@@ -9,8 +9,7 @@
             <label class="label">Email</label>
             <div class="control has-icons-left">
                 <input name="email" class="input" type="email" placeholder="Email">
-                <span class="icon is-small is-l// using bulma css a page confirming registration and a link to login page
-eft">
+                <span class="icon is-small is-left">
                     <i class="material-icons">email</i>
                 </span>
             </div>
@@ -115,4 +114,10 @@ eft">
         </div>
     </form>
 </div>
+{% if error is defined and error %}
+    <div class="notification is-danger" style="position: absolute; top: 2rem; right: 2rem; z-index: 1000; max-width: 320px;">
+        <button class="delete"></button>
+        {{ error }}
+    </div>
+{% endif %}
 {% endblock %}

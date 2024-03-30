@@ -67,14 +67,22 @@
                                     </span>
                                     {{ app.user.getEmail() }}
                                 </a>
-                                <a class="button" href="{{ path('panier') }}">
+                                <a class="button is-success" href="{{ path('panier') }}">
                                     <span class="material-icons mr-3">
                                         shopping_cart
                                     </span>
                                     Mon panier
                                 </a>
-                                <a class="button is-light" href="{{ path('_logout_main') }}">
-                                    Déconnexion
+                                <a class="button is-outlined is-primary" href="{{ path('commande') }}">
+                                    <span class="material-icons mr-3">
+                                        local_shipping
+                                    </span>
+                                    Mes commandes
+                                </a>
+                                <a class="button is-light is-outlined is-inverted" href="{{ path('_logout_main') }}">
+                                    <span class="material-icons">
+                                        logout
+                                    </span>
                                 </a>
                             {% else %}
                                 <a class="button is-dark" href="{{ path('register') }}">
