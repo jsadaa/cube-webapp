@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Panier;
 use App\Exception\ClientNonTrouve;
 use App\Exception\PanierNonTrouve;
 use App\Exception\ProduitNonPresentDansPanier;
 use App\Exception\ProduitNonTrouve;
 use App\Exception\QuantitePanierInvalide;
 use App\Exception\StockNonTrouve;
+use App\Security\User;
 use App\Service\ApiClientService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,11 +28,11 @@ class PanierController extends AbstractController
     public function index(ApiClientService $apiClient): Response
     {
         try {
-            /** @var User */
+            /** @var User $user */
             $user = $this->getUser();
             $id = $user->getId();
 
-            /** @var Panier|null */
+            /** @var Panier|null $panier*/
             $panier = $apiClient->getPanierClient($id);
 
             return $this->render('panier/index.html.twig', [
@@ -54,12 +56,12 @@ class PanierController extends AbstractController
             $data = $request->request->all();
             $quantite = $data['quantite'] ?? 1;
 
-            /** @var User */
+            /** @var User $user*/
             $user = $this->getUser();
 
             $panier = $apiClient->getPanierClient($user->getId());
 
-            /** @var Produit */
+            /** @var Produit $produit*/
             $produit = $apiClient->getProduit($id);
 
             $apiClient->ajouterProduitAuPanier($panier->getId(), $produit->getId(), $quantite);
@@ -84,7 +86,7 @@ class PanierController extends AbstractController
     public function vider(ApiClientService $apiClient): Response
     {
         try {
-            /** @var User */
+            /** @var User $user*/
             $user = $this->getUser();
 
             $panier = $apiClient->getPanierClient($user->getId());
@@ -154,14 +156,14 @@ class PanierController extends AbstractController
     public function validerPanier(ApiClientService $apiClient): Response
     {
         try {
-            /** @var User */
+            /** @var User $user*/
             $user = $this->getUser();
             $id = $user->getId();
 
-            /** @var Client */
+            /** @var Client $client*/
             $client = $apiClient->getClient($id);
 
-            /** @var Panier|null */
+            /** @var Panier|null $panier*/
             $panier = $apiClient->getPanierClient($id);
 
             return $this->render('panier/valider.html.twig', [
@@ -186,13 +188,10 @@ class PanierController extends AbstractController
             $data = $request->request->all();
 
             /**
-            * @var \App\Security\User $user
+            * @var User $user
             */
             $user = $this->getUser();
 
-            /**
-            * @var \App\Entity\Client $client
-            */
             $client = $apiClient->getClient($user->getId());
 
             $client->setNom($data['nom'] ?? $client->getNom());
@@ -205,12 +204,12 @@ class PanierController extends AbstractController
 
             $apiClient->ModifierClient($client);
 
-            /** @var Panier|null */
+            /** @var Panier|null $panier*/
             $panier = $apiClient->getPanierClient($user->getId());
 
             $apiClient->validerPanier($panier->getId());
 
-            return $this->redirectToRoute('panier');
+            return $this->redirectToRoute('commande');
         } catch (ClientNonTrouve|PanierNonTrouve $e) {
             return $this->render('home/index.html.twig', [
                 'error' => "Une erreur est survenue lors de la validation du panier. Veuillez réessayer."
