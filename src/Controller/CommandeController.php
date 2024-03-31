@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\ClientNonTrouve;
+use App\Security\User;
 use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class CommandeController extends AbstractController
     {
         try {
             /**
-            * @var \App\Security\User $user
+            * @var User $user
             */
             $user = $this->getUser();
 
@@ -36,7 +37,7 @@ class CommandeController extends AbstractController
     {
         try {
             /**
-            * @var \App\Security\User $user
+            * @var User $user
             */
             $user = $this->getUser();
             $client = $apiClientService->getClient($user->getId());
