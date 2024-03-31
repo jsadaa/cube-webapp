@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Exception\ClientNonTrouve;
 use App\Exception\FormatMotDePasseInvalide;
 use App\Exception\UtilisateurExisteDeja;
+use App\Security\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,13 +21,10 @@ class UserAccountController extends AbstractController
     {
         try {
             /**
-            * @var \App\Security\User $user
+            * @var User $user
             */
             $user = $this->getUser();
 
-            /**
-            * @var \App\Entity\Client $client
-            */
             $client = $apiClient->getClient($user->getId());
 
             return $this->render('user_account/index.html.twig', [
