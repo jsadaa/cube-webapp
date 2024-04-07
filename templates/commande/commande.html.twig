@@ -28,7 +28,7 @@
                             <p><strong>Code postal :</strong> {{ client.getCodePostal() }}</p>
                             <p><strong>Ville :</strong> {{ client.getVille() }}</p>
                             <p><strong>Pays :</strong> {{ client.getPays() }}</p>
-                            <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Payée{% else %}Non payée{% endif %}</p>
+                            <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Paiement effectué{% else %}A Payer{% endif %}</p>
                             <p><strong>Date de commande :</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
                             {% if commande.getDateLivraison() is not null %}
                                 <p><strong>Date de livraison :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>
