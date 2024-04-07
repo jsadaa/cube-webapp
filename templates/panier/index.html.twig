@@ -43,10 +43,10 @@
                         {% set produit = panier.getProduitById(ligne.produit.id) %}
                         {% if ligne.quantite > produit.getStock().getQuantite() %}
                             {% set invalid = "yes" %}
-                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock insuffisant : {{ produit.getStock().getQuantite() }} unité(s) restante(s) : Veuillez réduire la quantité</p>
+                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">error</i> Stock insuffisant : {{ produit.getStock().getQuantite() }} unité(s) restante(s) : Veuillez réduire la quantité</p>
                         {% endif %}
                         {% if produit.getStock().getStatut() == 'Quasiment Epuise' %}
-                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : {{ produit.getStock().getQuantite() }} unité(s) restante(s)</p>
+                            <p class="is-flex is-align-items-center has-text-warning"><i class="material-icons mr-3">warning</i> Stock : {{ produit.getStock().getQuantite() }} unité(s) restante(s)</p>
                         {% elseif produit.getStock().getStatut() == 'En Rupture de Stock' or produit.getStock().getStatut() == 'Indisponible' %}
                             <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : Rupture de stock</p>
                         {% endif %}
