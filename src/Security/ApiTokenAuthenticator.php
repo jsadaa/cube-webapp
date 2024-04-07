@@ -61,7 +61,7 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
 
         // Stockez les données de l'utilisateur dans la session
         $this->requestStack->getSession()->set('user', [
-            'id' => $data['clientId'],
+            'id' => $data['userId'],
             'email' => $email,
             'accessToken' => $data['accessToken'],
             'refreshToken' => $data['refreshToken'],
