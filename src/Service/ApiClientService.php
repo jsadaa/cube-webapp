@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use DateTime;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -31,6 +32,7 @@ use App\Exception\UtilisateurExisteDeja;
 use App\Exception\PanierNonTrouve;
 use App\Exception\ProduitNonPresentDansPanier;
 use App\Exception\QuantiteStockInsuffisante;
+use function PHPUnit\Framework\returnArgument;
 
 class ApiClientService
 {
@@ -403,7 +405,8 @@ class ApiClientService
 
     /**
      * @param int $idPanier
-     * @return void
+     * @param DateTime $dateLivraison
+     * @return int
      * @throws ClientExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws ErreurApi
@@ -411,12 +414,17 @@ class ApiClientService
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    public function validerPanier(int $idPanier) : void
+    public function validerPanier(int $idPanier, DateTime $dateLivraison) : int
     {
-        $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/valider');
+        $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/valider', [
+            'json' => [
+                'dateLivraison' => $dateLivraison->format('Y-m-d')
+            ]
+        ]);
 
         switch ($response->getStatusCode()) {
             case 200:
+                return $response->toArray()['idCommande'];
                 break;
             case 400:
                 throw new QuantiteStockInsuffisante();
@@ -466,6 +474,7 @@ class ApiClientService
      * @param int $idCommande
      * @return Commande
      * @throws ClientExceptionInterface
+     * @throws CommandeNonTrouvee
      * @throws ErreurApi
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -491,6 +500,8 @@ class ApiClientService
      * @param int $idCommande
      * @return Facture
      * @throws ClientExceptionInterface
+     * @throws CommandeNonTrouvee
+     * @throws FactureNonTrouvee
      * @throws ErreurApi
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -536,5 +547,25 @@ class ApiClientService
         $facture = $this->serializer->deserialize($response->getContent(), 'App\Entity\Facture', 'json');
 
         return $facture;
+    }
+
+    /**
+     * @param int $idFacture
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
+    public function payerFacture(int $idFacture) : void
+    {
+        $response = $this->client->request('PUT', $this->baseUrl . '/factures/' . $idFacture . '/payer');
+
+        match ($response->getStatusCode()) {
+            200 => null,
+            404 => throw new FactureNonTrouvee(),
+            default => throw new ErreurApi('Erreur lors du paiement de la facture. ' . $response->getContent() . ' ' . $response->getStatusCode())
+        };
     }
 }

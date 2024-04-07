@@ -2,7 +2,7 @@
 
 {% block body %}
     <section class="section">
-    <h1 class="title"><i class="material-icons mr-3" style="font-size: 25px;">local_shipping</i>Commande n°{{ commande.getId() }} du {{ commande.getDateCommande()|date('d/m/Y') }}</h1>
+    <h1 class="title"><i class="material-icons mr-3" style="font-size: 25px;">local_shipping</i>Commande NGSC00{{ commande.getId() }} du {{ commande.getDateCommande()|date('d/m/Y') }}</h1>
         <div class="card">
             <header class="card-header">
                 <p class="card-header-title">
@@ -12,6 +12,7 @@
             </header>
             <div class="card-content">
                 <div class="content">
+                    <h4 class="subtitle">Statut de la commande : {{ commande.getStatut() }}</h4>
                     <article class="message is-info">
                         <div class="message-header">
                             <p class="is-flex">
@@ -27,7 +28,7 @@
                             <p><strong>Code postal :</strong> {{ client.getCodePostal() }}</p>
                             <p><strong>Ville :</strong> {{ client.getVille() }}</p>
                             <p><strong>Pays :</strong> {{ client.getPays() }}</p>
-                            <p><strong>Statut :</strong> {{ commande.getStatut() }}</p>
+                            <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Payée{% else %}Non payée{% endif %}</p>
                             <p><strong>Date de commande :</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
                             {% if commande.getDateLivraison() is not null %}
                                 <p><strong>Date de livraison :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>

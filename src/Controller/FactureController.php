@@ -64,7 +64,7 @@ class FactureController extends AbstractController
             $invoice->addTotal("TVA 20%", $facture->getTva());
             $invoice->addTotal("Total TTC", $facture->getPrixTtc());
 
-            $invoice->addBadge("A payer", $facture->getPrixTtc());
+            $invoice->addBadge($facture->getStatut()->value === 'Payee' ? 'Payée' : 'A Payer', $facture->getStatut()->value === 'Payee' ? 'success' : 'warning');
 
             $invoice->addTitle("Informations");
             $invoice->addParagraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sed lacus ut enim ultrices posuere. Nullam nec tincidunt arcu. Nulla facilisi. Nullam nec tincidunt arcu. Nulla facilisi.");

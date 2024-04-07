@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+{% set invalid = "no" %}
 <section class="section">
     <h1 class="title"><i class="material-icons mr-3" style="font-size: 25px;">shopping_cart</i>Mon panier</h1>
     {% if panier is not null %}
@@ -40,6 +41,10 @@
                         <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Prix unitaire <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i> <span class="has-text-weight-medium">{{ ligne.prixUnitaire }} €</span></p>
                         <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Total <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i><span class="has-text-weight-bold">{{ ligne.quantite }} x {{ ligne.prixUnitaire }} = {{ ligne.total }} € </span></p>
                         {% set produit = panier.getProduitById(ligne.produit.id) %}
+                        {% if ligne.quantite > produit.getStock().getQuantite() %}
+                            {% set invalid = "yes" %}
+                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock insuffisant : {{ produit.getStock().getQuantite() }} unité(s) restante(s) : Veuillez réduire la quantité</p>
+                        {% endif %}
                         {% if produit.getStock().getStatut() == 'Quasiment Epuise' %}
                             <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : {{ produit.getStock().getQuantite() }} unité(s) restante(s)</p>
                         {% elseif produit.getStock().getStatut() == 'En Rupture de Stock' or produit.getStock().getStatut() == 'Indisponible' %}
@@ -65,9 +70,11 @@
                     <a href="{{ path('vider_panier') }}" class="card-footer-item">
                         <i class="material-icons mr-3">delete</i> Vider le panier
                     </a>
-                    <a href="{{ path('valider_panier') }}" class="card-footer-item">
-                        <i class="material-icons mr-3">shopping_cart</i> Passer la commande
-                    </a>
+                    {% if invalid == "no" %}
+                        <a href="{{ path('valider_panier') }}" class="card-footer-item">
+                            <i class="material-icons mr-3">shopping_cart</i> Passer la commande
+                        </a>
+                    {% endif %}
                 </footer>
             {% endif %}
         </div>

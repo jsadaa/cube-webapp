@@ -47,7 +47,7 @@
                         <form action="{{ path('ajouter_panier', {'id': produit.getId()}) }}" method="post" class="field is-horizontal is-grouped">
                             <div class="field has-addons">
                                 <div class="control">
-                                    <input type="number" name="quantite" class="input m-2" id="quantity-{{ produit.getId() }}" value="1" min="1" max="100">
+                                    <input type="number" name="quantite" class="input m-2" id="quantity-{{ produit.getId() }}" value="1" min="1" max="{{ produit.getStock().getQuantite() }}">
                                 </div>
                                 <div class="control">
                                     <button type="submit" class="button is-success m-2">

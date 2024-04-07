@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Panier;
+use App\Entity\Produit;
 use App\Exception\ClientNonTrouve;
 use App\Exception\PanierNonTrouve;
 use App\Exception\ProduitNonPresentDansPanier;
@@ -66,7 +67,6 @@ class PanierController extends AbstractController
 
             $panier = $apiClient->getPanierClient($user->getId());
 
-            /** @var Produit $produit*/
             $produit = $apiClient->getProduit($id);
 
             $apiClient->ajouterProduitAuPanier($panier->getId(), $produit->getId(), $quantite);
@@ -212,7 +212,13 @@ class PanierController extends AbstractController
             /** @var Panier|null $panier*/
             $panier = $apiClient->getPanierClient($user->getId());
 
-            $apiClient->validerPanier($panier->getId());
+            $idCommande = $apiClient->validerPanier($panier->getId(), new \DateTime($data['date_livraison']));
+
+            if ($data['moyen_paiement'] == 'carte') {
+                $commande = $apiClient->getCommande($idCommande);
+                $facture = $apiClient->getFactureParCommande($commande->getId());
+                $apiClient->payerFacture($facture->getId());
+            }
 
             return $this->redirectToRoute('commande');
         } catch (ClientNonTrouve|PanierNonTrouve $e) {

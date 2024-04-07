@@ -57,3 +57,14 @@ $(document).ready(function () {
         $(this).parent().hide();
     });
 });
+
+// on #moyen-paiement change, if value is 'reception', remove 'is-hidden' class from .reception-field and add 'is-hidden' class to .paiement-field
+$('#moyen-paiement').change(function() {
+    if ($(this).val() === 'reception') {
+        $('.paiement-field').addClass('is-hidden');
+        $('.paiement-field input').removeAttr('required').attr('disabled', 'disabled');
+    } else {
+        $('.paiement-field').removeClass('is-hidden');
+        $('.paiement-field input').attr('required', 'required').removeAttr('disabled');
+    }
+});

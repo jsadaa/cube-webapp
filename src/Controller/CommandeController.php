@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Exception\ClientNonTrouve;
+use App\Exception\CommandeNonTrouvee;
+use App\Exception\FactureNonTrouvee;
 use App\Security\User;
 use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

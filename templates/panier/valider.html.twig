@@ -77,9 +77,46 @@
                         </div>
                     </div>
                     <hr>
+                    <h2 class="title is-4 is-flex"><i class="material-icons mr-3" style="font-size: 25px;">credit_card</i>Informations de paiement</h2>
+                    <div class="field">
+                        <label class="label">Moyen de paiement</label>
+                        <div class="control">
+                            <div class="select">
+                                <select id="moyen-paiement" name="moyen_paiement" required>
+                                    <option value="carte">Carte bancaire</option>
+                                    <option value="reception">A réception</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field paiement-field">
+                        <label class="label">Numéro de carte bancaire</label>
+                        <div class="control">
+                            <input class="input" type="text" name="numero_carte" required>
+                        </div>
+                    </div>
+                    <div class="field paiement-field">
+                        <label class="label">Date d'expiration</label>
+                        <div class="control">
+                            <input class="input" type="date" name="date_expiration" required>
+                        </div>
+                    </div>
+                    <div class="field paiement-field">
+                        <label class="label">Cryptogramme</label>
+                        <div class="control">
+                            <input class="input" type="text" name="cryptogramme" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Date de livraison souhaitée</label>
+                        <div class="control">
+                            <input class="input" type="date" name="date_livraison" required>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="field is-grouped">
                         <div class="control">
-                            <button class="button is-primary"><span class="icon mr-3"><i class="material-icons">shopping_cart_checkout</i></span> Valider la commande</button>
+                            <button class="button is-primary"><span class="icon mr-3"><i class="material-icons">shopping_cart_checkout</i></span> Finaliser la commande</button>
                         </div>
                         <div class="control">
                             <a href="{{ path('panier') }}" class="button is-light"><span class="icon mr-3"><i class="material-icons">arrow_back</i></span> Retour au panier</a>
