@@ -2,6 +2,11 @@
 
 namespace App\Service;
 
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Serializer\Serializer as Serializer;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -43,8 +48,11 @@ class ApiClientService
     /**
      * @param int $idClient
      * @return Client
-     * @throws ClientNonTrouve
+     * @throws ClientExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getClient(int $idClient) : Client
     {
@@ -67,9 +75,12 @@ class ApiClientService
     /**
      * @param int $idProduit
      * @return Produit
-     * @throws ProduitNonTrouve
-     * @throws StockNonTrouve
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getProduit(int $idProduit) : Produit
     {
@@ -92,16 +103,21 @@ class ApiClientService
 
     /**
      * @param Client $client
-     * @return void
-     * @throws FormatMotDePasseInvalide
-     * @throws UtilisateurExisteDeja
+     * @return Client
+     * @throws ClientExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
-    public function creerClient(Client $client) : void
+    public function creerClient(Client $client) : Client
     {
         $response = $this->client->request('POST', $this->baseUrl . '/clients', [
             'json' => $client->toArrayAvecMotDePasse()
         ]);
+
+        /** @var Client $client */
+        $client = $this->serializer->deserialize($response->getContent(), 'App\Entity\Client', 'json');
 
         match ($response->getStatusCode()) {
             201 => null,
@@ -109,13 +125,18 @@ class ApiClientService
             409 => throw new UtilisateurExisteDeja(),
             default => throw new ErreurApi('Erreur lors de la création du client. ' . $response->getContent() . ' ' . $response->getStatusCode())
         };
+
+        return $client;
     }
 
     /**
      * @return Produit[]
-     * @throws ProduitNonTrouve
-     * @throws StockNonTrouve
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getProduits() : array
     {
@@ -129,22 +150,23 @@ class ApiClientService
         /** @var Produit[] $produits */
         $produits = $this->serializer->deserialize($response->getContent(), 'App\Entity\Produit[]', 'json');
 
-        $produits = array_map(function ($produit) {
+        return array_map(function ($produit) {
             $stock = $this->getStockParProduit($produit->getId());
             $produit->setStock($stock);
 
             return $produit;
         }, $produits);
-
-        return $produits;
     }
 
     /**
      * @param int $idProduit
      * @return Stock
-     * @throws StockNonTrouve
-     * @throws ProduitNonTrouve
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getStockParProduit(int $idProduit) : Stock
     {
@@ -161,7 +183,11 @@ class ApiClientService
 
     /**
      * @return FamilleProduit[]
+     * @throws ClientExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getFamillesProduits() : array
     {
@@ -181,8 +207,12 @@ class ApiClientService
     /**
      * @param int $idClient
      * @return Panier
-     * @throws ClientNonTrouve
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getPanierClient(int $idClient) : Panier
     {
@@ -195,16 +225,10 @@ class ApiClientService
                 break;
             case 404:
                 if ($response->toArray()['code'] === 'panier_introuvable') {
-                    $this->creerPanierClient($idClient);
-                    $response = $this->client->request('GET',  $this->baseUrl . '/commandes-clients/panier/client/' . $idClient);
-
-                    if ($response->getStatusCode() !== 200) {
-                        throw new ErreurApi('Erreur lors de la récupération du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
-                    }
+                    throw new PanierNonTrouve();
                 } else {
                     throw new ClientNonTrouve();
                 }
-                break;
             default:
                 throw new ErreurApi('Erreur lors de la récupération du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
@@ -220,8 +244,11 @@ class ApiClientService
     /**
      * @param int $idClient
      * @return void
-     * @throws ClientNonTrouve
+     * @throws ClientExceptionInterface
      * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function creerPanierClient(int $idClient) : void
     {
@@ -235,16 +262,17 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @param int $idProduit
-    * @param int $quantite
-    * @return void
-    * @throws QuantitePanierInvalide
-    * @throws ProduitNonTrouve
-    * @throws PanierNonTrouve
-    * @throws ClientNonTrouve
-    * @throws ErreurApi
-    */
+     * @param int $idPanier
+     * @param int $idProduit
+     * @param int $quantite
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function ajouterProduitAuPanier(int $idPanier, int $idProduit, int $quantite) : void
     {
         $response = $this->client->request('POST', $this->baseUrl . '/commandes-clients/panier/' . $idPanier. '/produit', [
@@ -268,15 +296,17 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @param int $idProduit
-    * @param int $quantite
-    * @return void
-    * @throws QuantitePanierInvalide
-    * @throws ProduitNonTrouve
-    * @throws PanierNonTrouve
-    * @throws ErreurApi
-    */
+     * @param int $idPanier
+     * @param int $idProduit
+     * @param int $quantite
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function modifierUnProduitDansLePanier(int $idPanier, int $idProduit, int $quantite) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/produit', [
@@ -297,13 +327,16 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @param int $idProduit
-    * @return void
-    * @throws ProduitNonPresentDansPanier
-    * @throws PanierNonTrouve
-    * @throws ErreurApi
-    */
+     * @param int $idPanier
+     * @param int $idProduit
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function supprimerProduitDuPanier(int $idPanier, int $idProduit) : void
     {
         $response = $this->client->request('DELETE', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/produit/' . $idProduit);
@@ -319,20 +352,20 @@ class ApiClientService
                 } else {
                     throw new PanierNonTrouve();
                 }
-                break;
             default:
                 throw new ErreurApi('Erreur lors de la suppression du produit du panier. ' . $response->getContent() . ' ' . $response->getStatusCode());
         }
     }
 
     /**
-    * @param Client $client
-    * @return void
-    * @throws FormatMotDePasseInvalide
-    * @throws ClientNonTrouve
-    * @throws UtilisateurExisteDeja
-    * @throws ErreurApi
-    */
+     * @param Client $client
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function ModifierClient(Client $client) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/clients/' . $client->getId(), [
@@ -349,11 +382,14 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @return void
-    * @throws PanierNonTrouve
-    * @throws ErreurApi
-    */
+     * @param int $idPanier
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function ViderUnPanier(int $idPanier) : void
     {
         $response = $this->client->request('DELETE', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/vider');
@@ -366,15 +402,15 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @return void
-    * @throws PanierNonTrouve
-    * @throws ClientNonTrouve
-    * @throws ProduitNonTrouve
-    * @throws StockNonTrouve
-    * @throws QuantiteStockInsuffisante
-    * @throws ErreurApi
-    */
+     * @param int $idPanier
+     * @return void
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function validerPanier(int $idPanier) : void
     {
         $response = $this->client->request('PUT', $this->baseUrl . '/commandes-clients/panier/' . $idPanier . '/valider');
@@ -402,11 +438,14 @@ class ApiClientService
     }
 
     /**
-    * @param int $idPanier
-    * @return Commande[]
-    * @throws ClientNonTrouve
-    * @throws ErreurApi
-    */
+     * @param int $idClient
+     * @return Commande[]
+     * @throws ErreurApi
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function getCommandesClient(int $idClient) : array
     {
         $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/client/' . $idClient);
@@ -424,11 +463,14 @@ class ApiClientService
     }
 
     /**
-    * @param int $idCommande
-    * @return Commande
-    * @throws CommandeNonTrouvee
-    * @throws ErreurApi
-    */
+     * @param int $idCommande
+     * @return Commande
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function getCommande(int $idCommande) : Commande
     {
         $response = $this->client->request('GET', $this->baseUrl . '/commandes-clients/commande/' . $idCommande);
@@ -446,12 +488,15 @@ class ApiClientService
     }
 
     /**
-    * @param int $idCommande
-    * @return Facture
-    * @throws CommandeNonTrouvee
-    * @throws FactureNonTrouvee
-    * @throws ErreurApi
-    */
+     * @param int $idCommande
+     * @return Facture
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws DecodingExceptionInterface
+     */
     public function getFactureParCommande(int $idCommande) : Facture
     {
         $response = $this->client->request('GET', $this->baseUrl . '/factures/commandes/' . $idCommande);
@@ -469,11 +514,14 @@ class ApiClientService
     }
 
     /**
-    * @param int $idFacture
-    * @return Facture
-    * @throws FactureNonTrouvee
-    * @throws ErreurApi
-    */
+     * @param int $idFacture
+     * @return Facture
+     * @throws ClientExceptionInterface
+     * @throws ErreurApi
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     */
     public function getFacture(int $idFacture) : Facture
     {
         $response = $this->client->request('GET', $this->baseUrl . '/factures/' . $idFacture);

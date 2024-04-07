@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Exception\ClientNonTrouve;
 use App\Exception\FormatMotDePasseInvalide;
 use App\Exception\UtilisateurExisteDeja;
 use App\Service\ApiClientService;
@@ -41,9 +42,14 @@ class RegisterController extends AbstractController
                 $data['password']
             );
 
-            $apiClient->creerClient($client);
+            $client = $apiClient->creerClient($client);
+            $apiClient->creerPanierClient($client->getId());
 
             return $this->redirectToRoute('register_validation');
+        } catch (ClientNonTrouve $e) {
+            return $this->render('home/index.html.twig', [
+                'error' => "Une erreur est survenue lors de la création du client. Veuillez réessayer.",
+            ]);
         } catch (FormatMotDePasseInvalide|UtilisateurExisteDeja $e) {
             return $this->render('register/index.html.twig', [
                 'error' => $e->getMessage(),

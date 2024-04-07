@@ -8,6 +8,11 @@ class Panier
     private mixed $total;
     private array $lignePanierClients = [];
 
+    /**
+     * @var list<Produit>|null
+     */
+    private ?array $produits = null;
+
     public function __construct(int $id, mixed $total, array $lignePanierClients)
     {
         $this->id = $id;
@@ -49,6 +54,32 @@ class Panier
         $this->lignePanierClients = $lignePanierClients;
 
         return $this;
+    }
+
+    /**
+     * @return list<Produit>|null
+     */
+    public function getProduits(): ?array
+    {
+        return $this->produits;
+    }
+
+
+    public function addProduit(Produit $produit): self
+    {
+        $this->produits[] = $produit;
+
+        return $this;
+    }
+
+    public function getProduitById(int $id): ?Produit
+    {
+        foreach ($this->produits as $produit) {
+            if ($produit->getId() === $id) {
+                return $produit;
+            }
+        }
+        return null;
     }
 
     public function getNombreProduits(): int

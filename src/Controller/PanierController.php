@@ -35,10 +35,15 @@ class PanierController extends AbstractController
             /** @var Panier|null $panier*/
             $panier = $apiClient->getPanierClient($id);
 
+            foreach ($panier->getLignePanierClients() as $lignePanierClient) {
+                $produit = $apiClient->getProduit($lignePanierClient['produit']['id']);
+                $panier->addProduit($produit);
+            }
+
             return $this->render('panier/index.html.twig', [
                 'panier' => $panier,
             ]);
-        } catch (ClientNonTrouve|PanierNonTrouve $e) {
+        } catch (ClientNonTrouve|PanierNonTrouve|ProduitNonTrouve|StockNonTrouve $e) {
             return $this->render('panier/index.html.twig', [
                 'panier' => null,
             ]);
