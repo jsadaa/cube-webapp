@@ -116,7 +116,7 @@
                                 <strong>Prix:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
                             </li>
                             <li class="stock">
-                                <strong>Statut:</strong> <span class="value">{{ produit.getStock().getStatut() }}</span>
+                                <strong>Disponibilité:</strong> <span class="value">{{ produit.getStock().getStatut() }}</span>
                             </li>
                         </ul>
                     </div>
@@ -127,7 +127,7 @@
                     <i class="material-icons mr-2">info</i>
                     <span class="is-size-6">Details</span>
                 </a>
-                {% if app.user and produit.getStock().getStatut() == 'En Stock' %}
+                {% if app.user and produit.getStock().getStatut() == 'En Stock' or produit.getStock().getStatut() == 'Quasiment Epuise' %}
                     <form action="{{ path('ajouter_panier', {'id': produit.getId()}) }}" method="post">
                         <div class="field has-addons">
                             <div class="control">
@@ -140,10 +140,16 @@
                             </div>
                         </div>
                     </form>
-                {% elseif produit.getStock().getStatut() != 'En Stock' %}
+                {% endif %}
+                {% if produit.getStock().getStatut() == 'Indisponible' or produit.getStock().getStatut() == 'En Rupture de Stock' %}
                     <button class="button is-danger m-2" disabled>
                         <i class="material-icons mr-2">remove_shopping_cart</i>
                         <span class="is-size-6">Indisponible</span>
+                    </button>
+                {% elseif produit.getStock().getStatut() == 'Quasiment Epuise' %}
+                    <button class="button is-warning m-2" disabled>
+                        <i class="material-icons mr-2">warning</i>
+                        <span class="is-size-6">Quasiment Epuisé</span>
                     </button>
                 {% endif %}
             </div>

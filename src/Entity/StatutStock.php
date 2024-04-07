@@ -6,6 +6,7 @@ enum StatutStock: string {
     case EnStock = 'EnStock';
     case EnRuptureDeStock = 'EnRuptureDeStock';
     case Indisponible = 'Indisponible';
+    case QuasimentEpuise = 'QuasimentEpuise';
     case EnCommande = 'EnCommande';
     case EnCoursDeLivraison = 'EnCoursDeLivraison';
     case Livre = 'Livre';

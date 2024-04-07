@@ -39,9 +39,15 @@
                         </p>
                         <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Prix unitaire <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i> <span class="has-text-weight-medium">{{ ligne.prixUnitaire }} €</span></p>
                         <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Total <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i><span class="has-text-weight-bold">{{ ligne.quantite }} x {{ ligne.prixUnitaire }} = {{ ligne.total }} € </span></p>
+                        {% set produit = panier.getProduitById(ligne.produit.id) %}
+                        {% if produit.getStock().getStatut() == 'Quasiment Epuise' %}
+                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : {{ produit.getStock().getQuantite() }} unité(s) restante(s)</p>
+                        {% elseif produit.getStock().getStatut() == 'En Rupture de Stock' or produit.getStock().getStatut() == 'Indisponible' %}
+                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : Rupture de stock</p>
+                        {% endif %}
                         <div class="field is-horizontal is-flex is-align-items-center has-addons mt-5">
                             <div class="control">
-                                <input class="input" type="number" value="{{ ligne.quantite }}" name="quantite" min="1" max="100">
+                                <input class="input" type="number" value="{{ ligne.quantite }}" name="quantite" min="1" max="{{ produit.getStock().getQuantite() }}">
                             </div>
                             <div class="control">
                                 <button type="submit" class="button is-primary"><i class="material-icons">edit</i></button>

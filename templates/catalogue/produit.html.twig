@@ -24,7 +24,23 @@
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">reviews</i></span><strong>Notre avis</strong> :</p>
                     <blockquote>{{ produit.getDescription() }}</blockquote>
                     {% if produit.estEnPromotion() %}
-                        <p><strong>Promotion : <span class="tag is-danger"><i class="material-icons">local_offer</i></span></p>
+                        <p><strong>Promotion : <span class="tag is-danger"><i class="material-icons">local_offer</i></span></strong></p>
+                    {% endif %}
+                    {% if produit.getStock().getStatut() == 'En Rupture de Stock' %}
+                        <button class="button is-warning mt-2" disabled>
+                            <i class="material-icons mr-2">contact_support</i>
+                            <span class="is-size-6" >Contactez-nous</span>
+                        </button>
+                    {% elseif produit.getStock().getStatut() == 'Quasiment Epuise' %}
+                        <button class="button is-warning mt-2" disabled>
+                            <i class="material-icons mr-2">warning</i>
+                            <span class="is-size-6" >Quasiment épuisé</span>
+                        </button>
+                    {% elseif produit.getStock().getStatut() == 'Indisponible' %}
+                        <button class="button is-danger mt-2" disabled>
+                            <i class="material-icons mr-2">local_grocery_store</i>
+                            <span class="is-size-6" >Produit indisponible</span>
+                        </button>
                     {% endif %}
                     <hr>
                     {% if app.user and produit.getStock().getStatut() == 'En Stock' %}
@@ -48,25 +64,16 @@
                                 </div>
                             </div>
                         </form>
-                    {% elseif produit.getStock().getStatut() != 'En Stock' %}
-                        <a href="{{ path('catalogue') }}" class="button is-info m-2">
-                            <i class="material-icons mr-2">arrow_back</i>
-                            <span class="is-size-6" >Retour au catalogue</span>
-                        </a>
-                        <a href="" class="button is-danger m-2" disabled>
-                            <i class="material-icons mr-2">local_grocery_store</i>
-                            <span class="is-size-6" >Produit indisponible</span>
-                        </a>
-                    {% else %}
-                        <a href="{{ path('catalogue') }}" class="button is-info m-2">
-                            <i class="material-icons mr-2">arrow_back</i>
-                            <span class="is-size-6" >Retour au catalogue</span>
-                        </a>
+                    {% elseif app.user == null %}
                         <a href="{{ path('login') }}" class="button is-warning m-2">
                             <i class="material-icons mr-2">login</i>
                             <span class="is-size-6" >Connectez-vous pour commander</span>
                         </a>
                     {% endif %}
+                    <a href="{{ path('catalogue') }}" class="button is-info m-2">
+                        <i class="material-icons mr-2">arrow_back</i>
+                        <span class="is-size-6" >Retour au catalogue</span>
+                    </a>
                 </div>
             </div>
         </div>
