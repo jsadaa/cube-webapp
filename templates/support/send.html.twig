@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="content">
+                                <h1 class="title is-4 is-flex"><i class="material-icons mr-3" style="font-size: 25px">mail</i>Votre demande de support a bien été envoyée</h1>
+                                <p>Votre message à été transmis à l'équipe de support. Nous vous répondrons dans les plus brefs délais.</p>
+                                <hr>
+                                <h3 class="title is-5 is-flex"><i class="material-icons mr-3" style="font-size: 18px">send</i> Récapitulatif de votre message : </h3>
+                                <div class="box">
+                                    <p><strong>Email :</strong> {{ email }}</p>
+                                    <p><strong>Objet :</strong> {{ subject }}</p>
+                                    <p><strong>Message :</strong> {{ message }}</p>
+                                </div>
+                                <hr>
+                                <a href="{{ path('home') }}" class="button is-primary">Retour à l'accueil</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
