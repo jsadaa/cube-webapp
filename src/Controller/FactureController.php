@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Exception\ClientNonTrouve;
 use App\Exception\CommandeNonTrouvee;
+use App\Exception\FactureNonTrouvee;
 use App\Security\User;
 use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,7 +75,7 @@ class FactureController extends AbstractController
             $invoice->render('Facture-' . $facture->getId() . '.pdf', 'D');
 
             return new Response();
-        } catch (ClientNonTrouve|FactureController|CommandeNonTrouvee $e) {
+        } catch (ClientNonTrouve|FactureNonTrouvee|CommandeNonTrouvee $e) {
             return $this->render('home/index.html.twig', ['error' => "Une erreur est survenue lors de la génération de la facture. Veuillez réessayer plus tard."]);
         } catch (\Exception $e) {
             return $this->render('home/index.html.twig', ['error' => $e->getMessage()]);

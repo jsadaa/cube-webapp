@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Panier;
-use App\Entity\Produit;
 use App\Exception\ClientNonTrouve;
 use App\Exception\PanierNonTrouve;
 use App\Exception\ProduitNonPresentDansPanier;
@@ -15,16 +14,10 @@ use App\Service\ApiClientService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PanierController extends AbstractController
 {
-    public function __construct(private HttpClientInterface $client, private SerializerInterface $serializer)
-    {
-    }
-
     #[Route('/panier', name: 'panier')]
     public function index(ApiClientService $apiClient): Response
     {

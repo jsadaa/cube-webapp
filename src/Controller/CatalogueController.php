@@ -17,10 +17,8 @@ class CatalogueController extends AbstractController
     public function index(ApiClientService $apiClient): Response
     {
         try {
-            /** @var Produit[] $produits*/
             $produits = $apiClient->getProduits();
 
-            /** @var FamilleProduit[] $famillesProduits*/
             $famillesProduits = $apiClient->getFamillesProduits();
 
             $cepages = array_unique(array_map(fn($produit) => $produit->getCepage(), $produits));
@@ -51,7 +49,6 @@ class CatalogueController extends AbstractController
     public function produit(HttpClientInterface $client, Serializer $serializer, int $id, ApiClientService $apiClient): Response
     {
         try {
-            /** @var Produit $produit*/
             $produit = $apiClient->getProduit($id);
 
             return $this->render('catalogue/produit.html.twig', [
