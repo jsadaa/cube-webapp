@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="section">
+    <h1 class="title"><i class="material-icons" style="font-size: 25px;">info</i> Qui sommes-nous ?</h1>
+    <div class="content is-flex is-justify-content-center mt-6">
+        <figure class="image" style="max-width: 500px;">
+            <img src="{{ asset('img/home-1.png') }}" alt="Qui sommes-nous ?" class="is-rounded">
+        </figure>
+    </div>
+    <div class="content mt-6 box">
+        <h2 class="title">Notre entreprise</h2>
+        <p class="block">Negosud est une entreprise spécialisée dans la vente de vins d'excellence. Nous vous proposons une sélection de vins de qualité, issus de domaines viticoles reconnus.</p>
+        <p class="block">Créée en 1985, notre entreprise est située à Paris. Nous avons acquis une solide réputation dans le domaine de la vente de vins et nous mettons tout en oeuvre pour vous proposer des produits de qualité.</p>
+        <p class="block">Nous avons une équipe de professionnels qui sont à votre écoute pour répondre à toutes vos questions. N'hésitez pas à nous contacter pour plus d'informations.</p>
+        <p class="block">Nous vous souhaitons une agréable visite sur notre site.</p>
+    </div>
+</section>
+
+{% endblock %}
