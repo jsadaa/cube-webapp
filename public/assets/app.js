@@ -1,3 +1,4 @@
+// Home carousel
 $(document).ready(function () {
     bulmaCarousel.attach('#carousel', {
         slidesToScroll: 1,
@@ -11,6 +12,7 @@ $(document).ready(function () {
     });
 });
 
+// Catalog filter
 $('#filter-button').click(function() {
     var appellation = $('#appellation option:selected:not(:disabled)').val() || '';
     var cepage = $('#cepage option:selected:not(:disabled)').val() || '';
@@ -33,6 +35,7 @@ $('#filter-button').click(function() {
     });
 });
 
+// Catalog filter reset
 $('#reset-button').click(function() {
     $('#appellation').val($('#appellation option:disabled').val());
     $('#cepage').val($('#cepage option:disabled').val());
@@ -42,23 +45,14 @@ $('#reset-button').click(function() {
     $('.card').show();
 });
 
-//document.addEventListener('DOMContentLoaded', () => {
-//  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-//    const $notification = $delete.parentNode;
-//
-//    $delete.addEventListener('click', () => {
-//      $notification.parentNode.removeChild($notification);
-//    });
-//  });
-//});
-
+// error notification
 $(document).ready(function () {
     $('.notification .delete').click(function() {
         $(this).parent().hide();
     });
 });
 
-// on #moyen-paiement change, if value is 'reception', remove 'is-hidden' class from .reception-field and add 'is-hidden' class to .paiement-field
+// Panier payment method
 $('#moyen-paiement').change(function() {
     if ($(this).val() === 'reception') {
         $('.paiement-field').addClass('is-hidden');
@@ -66,5 +60,23 @@ $('#moyen-paiement').change(function() {
     } else {
         $('.paiement-field').removeClass('is-hidden');
         $('.paiement-field input').attr('required', 'required').removeAttr('disabled');
+    }
+});
+
+// theme switcher
+$('#dark-mode').click(function() {
+    document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    // change #theme-button content conditionally
+    $('#theme-button').text(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light_mode' : 'dark_mode');
+    localStorage.setItem('theme', document.documentElement.getAttribute('data-theme'));
+});
+
+$(document).ready(function() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        $('#theme-button').text('light_mode');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        $('#theme-button').text('dark_mode');
     }
 });
