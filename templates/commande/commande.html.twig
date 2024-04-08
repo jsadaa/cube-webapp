@@ -13,6 +13,14 @@
             <div class="card-content">
                 <div class="content">
                     <h4 class="subtitle">Statut de la commande : {{ commande.getStatut() }}</h4>
+                    <hr>
+                    <p><strong>Date de commande :</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
+                    {% if commande.getDateLivraison() is not null %}
+                        <p><strong>Date de livraison prévue :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>
+                    {% else %}
+                        <p><strong>Date de livraison prévue :</strong> Non définie</p>
+                    {% endif %}
+                    <hr>
                     <article class="message is-info">
                         <div class="message-header">
                             <p class="is-flex">
@@ -29,13 +37,6 @@
                             <p><strong>Ville :</strong> {{ client.getVille() }}</p>
                             <p><strong>Pays :</strong> {{ client.getPays() }}</p>
                             <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Paiement effectué{% else %}A Payer{% endif %}</p>
-                            <p><strong>Date de commande :</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
-                            {% if commande.getDateLivraison() is not null %}
-                                <p><strong>Date de livraison :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>
-                            {% else %}
-                                <p><strong>Date de livraison :</strong> Non définie</p>
-                            {% endif %}
-
                         </div>
                     </article>
                     <table class="table is-fullwidth">
