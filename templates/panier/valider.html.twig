@@ -28,9 +28,19 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="1">Total</td>
-                            <td colspan="2">{{ panier.getQuantitéTotale() }}</td>
+                            <td colspan="1" class="has-text-weight-semibold">Total HT</td>
+                            <td colspan="2"></td>
                             <td>{{ panier.getTotal() }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="has-text-weight-semibold">TVA (20%)</td>
+                            <td colspan="2"></td>
+                            <td>{{ panier.getTotal() * 0.2 }} €</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" class="has-text-weight-semibold">Total TTC</td>
+                            <td colspan="2" class="has-text-weight-semibold">{{ panier.getQuantitéTotale() }} article(s)</td>
+                            <td>{{ panier.getTotal() * 1.2 }} €</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -76,6 +86,12 @@
                             <input class="input" type="tel" name="telephone" required value="{{ client.getTelephone() }}">
                         </div>
                     </div>
+                    <div class="field">
+                        <label class="label">Date de livraison souhaitée</label>
+                        <div class="control">
+                            <input class="input" type="date" name="date_livraison" required>
+                        </div>
+                    </div>
                     <hr>
                     <h2 class="title is-4 is-flex"><i class="material-icons mr-3" style="font-size: 25px;">credit_card</i>Informations de paiement</h2>
                     <div class="field">
@@ -105,12 +121,6 @@
                         <label class="label">Cryptogramme</label>
                         <div class="control">
                             <input class="input" type="text" name="cryptogramme" required>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Date de livraison souhaitée</label>
-                        <div class="control">
-                            <input class="input" type="date" name="date_livraison" required>
                         </div>
                     </div>
                     <hr>
