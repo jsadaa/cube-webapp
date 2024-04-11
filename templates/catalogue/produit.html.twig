@@ -3,13 +3,21 @@
 {% block body %}
     <section class="section">
         <div class="container">
-            <h1 class="title">{{ produit.getNom() }}</h1>
+            <h1 class="title is-flex is-align-items-center is-justify-content-start">
+                <span class="mr-5">{{ produit.getNom() }}</span>
+                {% if produit.estEnPromotion() %}
+                    <span class="tag is-danger py-4 px-2"><i class="material-icons mr-2">local_offer</i>{{ produit.getPromotion().getNom() }} - {{ produit.getPromotion().getPourcentage() }} %</span>
+                {% endif %}
+            </h1>
             <div class="columns">
                 <div class="column is-one-third" style="max-width: 30%">
                     <img src="{{ asset('img/' ~ produit.getNomImage()) }}" alt="{{ produit.getNom() }}" class="image" style="border-radius: 10px;">
                 </div>
                 <div class="column content is-half">
-                    <div class="is-flex is-align-items-center mb-5"><span class="mr-3 is-flex is-align-items-center"><i class="icon material-icons" style="font-size: 24px;">info</i></span><span class="title is-4">Fiche produit</span></div>
+                    <div class="is-flex is-align-items-center mb-5">
+                        <span class="mr-3 is-flex is-align-items-center"><i class="icon material-icons" style="font-size: 24px;">info</i></span>
+                        <span class="title is-4 my-0 mr-3">Fiche produit</span>
+                    </div>
                     <hr>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">label</i></span><strong>Appellation</strong> : {{ produit.getAppellation() }}</p>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">wine_bar</i></span><strong>Cepage</strong> : {{ produit.getCepage() }}</p>
@@ -18,14 +26,15 @@
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">pin_drop</i></span><strong>Region</strong> : {{ produit.getRegion() }}</p>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">event</i></span><strong>Annee</strong> : {{ produit.getAnnee() }}</p>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">liquor</i></span><strong>Degré</strong> : {{ produit.getDegreAlcool() }} °</p>
-                    <p class="is-flex"><span class="mr-3"><i class="icon material-icons">euro</i></span><strong>Prix unitaire</strong> : {{ produit.getPrixVente() }} €</p>
+                    {% if produit.estEnPromotion() %}
+                        <p class="is-flex"><span class="mr-3"><i class="icon material-icons">local_offer</i></span><strong class="mr-3">Prix unitaire:</strong><s class="mr-3">{{ produit.getPrixSansPromotion() }} €</s><strong>{{ produit.getPrixVente() }} €</strong></p>
+                    {% else %}
+                        <p class="is-flex"><span class="mr-3"><i class="icon material-icons">euro</i></span><strong>Prix unitaire</strong> : {{ produit.getPrixVente() }} €</p>
+                    {% endif %}
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">calendar_today</i></span><strong>Date de péremption</strong> : {{ produit.getDatePeremption()|date('d/m/Y') }}</p>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">inventory</i></span><strong>Disponibilité</strong> : {{ produit.getStock().getStatut() }}</p>
                     <p class="is-flex"><span class="mr-3"><i class="icon material-icons">reviews</i></span><strong>Notre avis</strong> :</p>
                     <blockquote>{{ produit.getDescription() }}</blockquote>
-                    {% if produit.estEnPromotion() %}
-                        <p><strong>Promotion : <span class="tag is-danger"><i class="material-icons">local_offer</i></span></strong></p>
-                    {% endif %}
                     {% if produit.getStock().getStatut() == 'En Rupture de Stock' %}
                         <button class="button is-warning mt-2" disabled>
                             <i class="material-icons mr-2">contact_support</i>

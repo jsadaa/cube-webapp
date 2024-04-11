@@ -114,13 +114,20 @@
                                 <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
                             </li>
                             <li class="prix mb-2">
-                                <strong>Prix unitaire:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
+                                {% if produit.estEnPromotion() %}
+                                    <strong>Prix unitaire:</strong> <span class="value"><s class="mr-2">{{ produit.getPrixSansPromotion() }} €</s><strong>{{ produit.getPrixVente() }} €</strong></span>
+                                {% else %}
+                                    <strong>Prix unitaire:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
+                                {% endif %}
                             </li>
                             <li class="stock">
                                 <strong>Disponibilité:</strong> <span class="value">{{ produit.getStock().getStatut() }}</span>
                             </li>
                         </ul>
                     </div>
+                    {% if produit.estEnPromotion() %}
+                        <span class="tag is-danger py-4 px-2 ml-5 mt-1"><i class="material-icons mr-2">local_offer</i>{{ produit.getPromotion().getNom() }} - {{ produit.getPromotion().getPourcentage() }} %</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="m-3 card-footer pt-3 is-flex is-justify-content-space-between">

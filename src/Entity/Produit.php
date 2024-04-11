@@ -19,6 +19,7 @@ class Produit
         private float $prixVente,
         private DateTime $datePeremption,
         private bool $enPromotion,
+        private ?Promotion $promotion,
         private string $familleProduitNom,
         private string $fournisseurNom,
         private ?Stock $stock = null
@@ -67,12 +68,12 @@ class Produit
 
     public function getPrixAchat(): float
     {
-        return $this->prixAchat;
+        return round($this->prixAchat, 2);
     }
 
     public function getPrixVente(): float
     {
-        return $this->prixVente;
+        return round($this->prixVente, 2);
     }
 
     public function getDatePeremption(): DateTime
@@ -85,6 +86,11 @@ class Produit
         return $this->enPromotion;
     }
 
+    public function getPromotion(): ?Promotion
+    {
+        return $this->promotion;
+    }
+
     public function getFamilleProduitNom(): string
     {
         return $this->familleProduitNom;
@@ -95,14 +101,9 @@ class Produit
         return match ($this->familleProduitNom) {
             'Vin rouge' => 'vin_rouge.webp',
             'Vin blanc' => 'vin_blanc.webp',
-            'Vin rosé' => 'vin_rose.webp',
+            'Vin rosé', 'Vin de glace', 'Vin de liqueur' => 'vin_rose.webp',
             'Vin pétillant' => 'champagne.webp',
-            'Vin doux' => 'vin_rose_2.webp',
-            'Vin de dessert' => 'vin_rose_2.webp',
-            'Vin de glace' => 'vin_rose.webp',
-            'Vin de liqueur' => 'vin_rose.webp',
-            'Vin de fruit' => 'vin_rose_2.webp',
-            'Vin de fleur' => 'vin_rose_2.webp',
+            'Vin doux', 'Vin de dessert', 'Vin de fruit', 'Vin de fleur' => 'vin_rose_2.webp',
             default => 'autres.png',
         };
     }
@@ -120,5 +121,10 @@ class Produit
     public function setStock(Stock $stock): void
     {
         $this->stock = $stock;
+    }
+
+    public function getPrixSansPromotion(): float
+    {
+        return round($this->enPromotion ? $this->prixVente + ($this->prixVente * $this->promotion->getPourcentage() / 100) : $this->prixVente, 2);
     }
 }
