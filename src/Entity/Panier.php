@@ -34,7 +34,7 @@ class Panier
 
     public function getTotal(): mixed
     {
-        return $this->total;
+        return round($this->total, 2);
     }
 
     public function setTotal(mixed $total): self

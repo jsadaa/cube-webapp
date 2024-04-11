@@ -36,11 +36,11 @@ class LignePanierClients
 
     public function getPrixUnitaire(): float
     {
-        return $this->prixUnitaire;
+        return round($this->prixUnitaire, 2);
     }
 
     public function getTotal(): mixed
     {
-        return $this->total;
+        return round($this->total, 2);
     }
 }

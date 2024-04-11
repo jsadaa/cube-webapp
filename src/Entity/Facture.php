@@ -49,17 +49,17 @@ class Facture
 
     public function getPrixHt(): mixed
     {
-        return $this->prixHt;
+        return round($this->prixHt, 2);
     }
 
     public function getPrixTtc(): mixed
     {
-        return $this->prixTtc;
+        return round($this->prixTtc, 2);
     }
 
     public function getTva(): mixed
     {
-        return $this->tva * $this->prixHt;
+        return round($this->tva * $this->prixHt, 2);
     }
 
     public function getCommande(): ?Commande
