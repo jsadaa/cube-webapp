@@ -57,7 +57,7 @@
             <div class="control">
                 <div class="select">
                     <select id="fournisseur">
-                        <option selected disabled>Fournisseur</option>
+                        <option selected disabled>Vignoble</option>
                         {% for fournisseur in fournisseurs %}
                             <option>{{ fournisseur }}</option>
                         {% endfor %}
@@ -87,9 +87,9 @@
                     <i class="material-icons mr-2" style="font-size: 1.3rem;">local_bar</i>
                     {{ produit.getNom() }}
                 </p>
-                <p class="card-header-title is-size-7 is-italic m-3 is-flex is-justify-content-end">
+                <p class="fournisseur card-header-title is-size-7 is-italic m-3 is-flex is-justify-content-end">
                     <i class="material-icons mr-2" style="font-size: 1.3rem;">agriculture</i>
-                    {{ produit.getFournisseurNom() }}
+                    <span class="value">{{ produit.getFournisseurNom() }}</span>
                 </p>
             </div>
             <div class="is-flex card-content">
