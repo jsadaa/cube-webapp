@@ -87,6 +87,10 @@
                     <i class="material-icons mr-2" style="font-size: 1.3rem;">local_bar</i>
                     {{ produit.getNom() }}
                 </p>
+                <p class="card-header-title is-size-7 is-italic m-3 is-flex is-justify-content-end">
+                    <i class="material-icons mr-2" style="font-size: 1.3rem;">agriculture</i>
+                    {{ produit.getFournisseurNom() }}
+                </p>
             </div>
             <div class="is-flex card-content">
                 <div class="card-image is-flex is-justify-content-end">
@@ -108,9 +112,6 @@
                             </li>
                             <li class="famille mb-2">
                                 <strong>Famille:</strong> <span class="value">{{ produit.getFamilleProduitNom() }} </span>
-                            </li>
-                            <li class="fournisseur mb-2">
-                                <strong>Fournisseur:</strong> <span class="value">{{ produit.getFournisseurNom() }} </span>
                             </li>
                             <li class="prix mb-2">
                                 <strong>Prix unitaire:</strong> <span class="value">{{ produit.getPrixVente() }} €</span>
