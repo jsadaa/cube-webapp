@@ -32,12 +32,14 @@ class FactureController extends AbstractController
             $invoice->setType("Facture");
             $invoice->setReference("NGSF00" . $facture->getId());
             $invoice->setDate($facture->getDateFacture()->format('d/m/Y'));
-            $invoice->setDue($facture->getDateFacture()->add(new \DateInterval('P2M'))->format('d/m/Y'));
+            if ($facture->getStatut()->value !== 'Payee') {
+                $invoice->setDue($facture->getDateFacture()->add(new \DateInterval('P2M'))->format('d/m/Y'));
+            }
             $invoice->setFrom([
                 "Société Negosud",
                 "123 Rue de la Paix",
-                "75000",
-                "Paris",
+                "40192",
+                "Mont-de-Marsan",
                 "France"
             ]);
 
