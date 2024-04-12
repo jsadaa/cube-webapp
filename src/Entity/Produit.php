@@ -125,6 +125,6 @@ class Produit
 
     public function getPrixSansPromotion(): float
     {
-        return round($this->enPromotion ? $this->prixVente + ($this->prixVente * $this->promotion->getPourcentage() / 100) : $this->prixVente, 2);
+        return round($this->enPromotion ? $this->prixVente / (1 - $this->promotion->getPourcentage() / 100) : $this->prixVente, 2);
     }
 }
