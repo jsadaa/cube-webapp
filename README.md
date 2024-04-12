@@ -18,19 +18,19 @@ Elle consomme une API REST pour la gestion des données (cf. [API NEGOSUD](https
 
 ### Installation du projet
 
-1. Cloner le projet
+- Cloner le projet
 
 ```bash
 git clone git@github.com:LCE-CESI/webapp-symfony.git
 ```
 
-2. Installer les dépendances
+- Installer les dépendances
 
 ```bash
 composer install
 ```
 
-3. Configurer les variables d'environnement
+- Configurer les variables d'environnement
 
 Créer un fichier `.env.local` à la racine du projet et ajouter les variables d'environnement suivantes :
 
@@ -38,15 +38,17 @@ Créer un fichier `.env.local` à la racine du projet et ajouter les variables d
 API_BASE_URL=http://localhost:5273/api
 ```
 
-4. Démarrer le serveur
+
+
+## Utilisation
+
+- Démarrer le serveur
 
 ```bash
 symfony server:start
 ```
 
-## Utilisation
-
-Ouvrir un navigateur et accéder à l'URL suivante :
+- Ouvrir un navigateur et accéder à l'URL suivante :
 
 ```
 http://localhost:8000
