@@ -5,7 +5,7 @@
 Cette application est un site de vente en ligne des produits de la société NEGOSUD. 
 Elle permet aux clients de consulter les produits disponibles, de les ajouter au panier, de passer des commandes, de consulter l'historique des commandes et des factures.
 
-Elle consomme une API REST pour la gestion des données (cf. [API NEGOSUD](https://github.com/LCE-CESI/ApiCube)
+Elle consomme une API REST pour la gestion des données (cf. [API NEGOSUD](https://github.com/LCE-CESI/ApiCube)).
 
 ## Installation
 
