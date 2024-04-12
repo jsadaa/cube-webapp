@@ -48,7 +48,7 @@
                         {% if produit.getStock().getStatut() == 'Quasiment Epuise' %}
                             <p class="is-flex is-align-items-center has-text-warning"><i class="material-icons mr-3">warning</i> Stock : {{ produit.getStock().getQuantite() }} unité(s) restante(s)</p>
                         {% elseif produit.getStock().getStatut() == 'En Rupture de Stock' or produit.getStock().getStatut() == 'Indisponible' %}
-                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">warning</i> Stock : Rupture de stock</p>
+                            <p class="is-flex is-align-items-center has-text-danger"><i class="material-icons mr-3">error</i> Stock : Rupture de stock</p>
                         {% endif %}
                         <div class="field is-horizontal is-flex is-align-items-center has-addons mt-5">
                             <div class="control">
