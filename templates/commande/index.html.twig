@@ -32,7 +32,7 @@
                             <div class="content">
                                 <p class="is-flex"><span class="icon"><i class="material-icons mr-2">calendar_month</i></span>Date de livraison : {{ commande.dateLivraison ? commande.dateLivraison|date('d/m/Y') : 'Non définie' }}</p>
                                 <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">info</i></span>Statut : {{ commande.statut }}</p>
-                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ commande.total * 1.2 }} € TTC</p>
+                                <p class="is-flex"><span class="icon"><i class="material-icons-outlined mr-2">credit_card</i></span>Total : {{ (commande.getTotal() * 1.2)|round(2, 'floor') }} € TTC</p>
                             </div>
                         </div>
                         <footer class="card-footer">

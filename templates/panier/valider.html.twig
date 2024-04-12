@@ -21,8 +21,8 @@
                             <tr>
                                 <td>{{ ligne.produit.nom }}</td>
                                 <td>{{ ligne.quantite }}</td>
-                                <td>{{ ligne.prixUnitaire }} €</td>
-                                <td>{{ ligne.total }} €</td>
+                                <td>{{ ligne.prixUnitaire|round(2, 'floor') }} €</td>
+                                <td>{{ ligne.total|round(2, 'floor') }} €</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -35,12 +35,12 @@
                         <tr>
                             <td colspan="1" class="has-text-weight-semibold">TVA (20%)</td>
                             <td colspan="2"></td>
-                            <td>{{ panier.getTotal() * 0.2 }} €</td>
+                            <td>{{ (panier.getTotal() * 0.2)|round(2, 'floor') }} €</td>
                         </tr>
                         <tr>
                             <td colspan="1" class="has-text-weight-semibold">Total TTC</td>
                             <td colspan="2" class="has-text-weight-semibold">{{ panier.getQuantitéTotale() }} article(s)</td>
-                            <td>{{ panier.getTotal() * 1.2 }} €</td>
+                            <td>{{ (panier.getTotal() * 1.2)|round(2, 'floor') }} €</td>
                         </tr>
                     </tfoot>
                 </table>

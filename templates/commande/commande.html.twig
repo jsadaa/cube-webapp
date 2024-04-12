@@ -54,7 +54,7 @@
                                     <td>{{ ligne.getProduit().getNom() }}</td>
                                     <td>{{ ligne.getQuantite() }}</td>
                                     <td>{{ ligne.getPrixUnitaire()}} €</td>
-                                    <td>{{ ligne.getTotal() * 1.2 }} €</td>
+                                    <td>{{ (ligne.getTotal() * 1.2)|round(2, 'floor') }} €</td>
                                 </tr>
                             {% endfor %}
                                 <tr>

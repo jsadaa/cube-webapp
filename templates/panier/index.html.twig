@@ -39,7 +39,7 @@
                             </a>
                         </p>
                         <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Prix unitaire <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i> <span class="has-text-weight-medium">{{ ligne.prixUnitaire }} €</span></p>
-                        <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Total <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i><span class="has-text-weight-bold">{{ ligne.quantite }} x {{ ligne.prixUnitaire }} = {{ ligne.total }} € </span></p>
+                        <p class="is-flex is-align-items-center"><i class="material-icons-outlined mr-3">info</i> Total <i class="material-icons ml-2 mr-2 is-flex" style="font-size: 11px;">arrow_forward</i><span class="has-text-weight-bold">{{ ligne.quantite }} x {{ ligne.prixUnitaire|round(2, 'floor') }} = {{ ligne.total|round(2, 'floor') }} € </span></p>
                         {% set produit = panier.getProduitById(ligne.produit.id) %}
                         {% if ligne.quantite > produit.getStock().getQuantite() %}
                             {% set invalid = "yes" %}
