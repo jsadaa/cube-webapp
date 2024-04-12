@@ -48,7 +48,7 @@ class Commande {
         foreach ($this->ligneCommandeClients as $ligneCommandeClient) {
             $total += $ligneCommandeClient->getTotal();
         }
-        return $total;
+        return round($total, 2);
     }
 
     public function getQuantite(): int {
