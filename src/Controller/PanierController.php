@@ -206,14 +206,17 @@ class PanierController extends AbstractController
             $panier = $apiClient->getPanierClient($user->getId());
 
             $idCommande = $apiClient->validerPanier($panier->getId(), new \DateTime($data['date_livraison']));
+            $commande = $apiClient->getCommande($idCommande);
+            $facture = $apiClient->getFactureParCommande($commande->getId());
 
             if ($data['moyen_paiement'] == 'carte') {
-                $commande = $apiClient->getCommande($idCommande);
-                $facture = $apiClient->getFactureParCommande($commande->getId());
                 $apiClient->payerFacture($facture->getId());
             }
 
-            return $this->redirectToRoute('commande');
+            return $this->render('commande/valider.html.twig', [
+                'commande' => $commande,
+                'facture' => $apiClient->getFactureParCommande($commande->getId())
+            ]);
         } catch (ClientNonTrouve|PanierNonTrouve $e) {
             return $this->render('home/index.html.twig', [
                 'error' => "Une erreur est survenue lors de la validation du panier. Veuillez réessayer."

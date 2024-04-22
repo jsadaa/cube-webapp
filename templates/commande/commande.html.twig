@@ -36,7 +36,7 @@
                             <p><strong>Code postal :</strong> {{ client.getCodePostal() }}</p>
                             <p><strong>Ville :</strong> {{ client.getVille() }}</p>
                             <p><strong>Pays :</strong> {{ client.getPays() }}</p>
-                            <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Paiement effectué{% else %}A Payer{% endif %}</p>
+                            <p><strong>Statut :</strong> {% if facture.getStatut().value == "Payee" %}Paiement effectué{% else %}En attente de paiement{% endif %}</p>
                         </div>
                     </article>
                     <table class="table is-fullwidth">

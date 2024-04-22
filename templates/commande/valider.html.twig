@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="content">
+                                <h1 class="title is-4 is-flex"><i class="material-icons mr-3" style="font-size: 25px">check_circle</i> Commande validée !</h1>
+                                <p>Merci pour votre commande, vous recevrez un email de confirmation dans quelques instants.</p>
+                                <hr>
+                                <h3 class="title is-5 is-flex"><i class="material-icons mr-3" style="font-size: 18px">checklist</i> Récapitulatif de votre commande</h3>
+                                <div class="box">
+                                    <p><strong>Numéro de commande:</strong> NGSC00{{ commande.getId() }}</p>
+                                    <hr>
+                                    <p><strong>Nombres d'articles:</strong> {{ commande.getQuantite() }}</p>
+                                    <p><strong>Montant total:</strong> {{ commande.getTotal() }} €</p>
+                                    <hr>
+                                    <p><strong>Date de la commande:</strong> {{ commande.getDateCommande()|date('d/m/Y') }}</p>
+                                    {% if commande.getDateLivraison() is not null %}
+                                        <p><strong>Date de livraison estimée :</strong> {{ commande.getDateLivraison()|date('d/m/Y') }}</p>
+                                    {% endif %}
+                                    <hr>
+                                    {% if facture.getStatut().value == "Payee" %}
+                                        <p><strong>Statut de la commande:</strong> Paiement effectué</p>
+                                    {% else %}
+                                        <p><strong>Statut de la commande:</strong> En attente de paiement</p>
+                                    {% endif %}
+                                </div>
+                                <hr>
+                                <a href="{{ path('commande') }}" class="button is-primary">Voir mes commandes</a>
+                                <a href="{{ path('home') }}" class="button is-link">Retour à l'accueil</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
