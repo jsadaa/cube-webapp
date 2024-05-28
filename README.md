@@ -1,59 +1,60 @@
-# WEB APP - NEGOSUD
+# Cube - Webapp : Wine shop
 
 ## Description
 
-Cette application est un site de vente en ligne des produits de la société NEGOSUD. 
-Elle permet aux clients de consulter les produits disponibles, de les ajouter au panier, de passer des commandes, de consulter l'historique des commandes et des factures.
+This app is an online sales site for a fictive company during a school project.
+It allows customers to view available products, add them to the cart, place orders, view order history and invoices.
 
-Elle consomme une API REST pour la gestion des données (cf. [API NEGOSUD](https://github.com/LCE-CESI/ApiCube)).
+It consumes a REST API for data management (cf. [API NEGOSUD](cf. [API NEGOSUD](https://github.com/jsadaa/cube-api))).
 
 ## Installation
 
-### Prérequis
+### Prerequisites
 
 - PHP 8.2
 - Symfony 7.0
 - Symfony CLI
 - Composer
 
-### Installation du projet
+### Installation
 
-- Cloner le projet
+- Clone the repository
 
 ```bash
 git clone git@github.com:LCE-CESI/webapp-symfony.git
 ```
 
-- Installer les dépendances
+- Install dependencies
 
 ```bash
 composer install
 ```
 
-- Configurer les variables d'environnement
+- Configure the environment
 
-Créer un fichier `.env.local` à la racine du projet et ajouter les variables d'environnement suivantes :
+Create a `.env.local` file at the root of the project and fill the API URL with the correct value.
+
+Example:
 
 ```env
 API_BASE_URL=http://localhost:5273/api
 ```
 
 
+## Usage
 
-## Utilisation
-
-- Démarrer le serveur
+- Start the Symfony server
 
 ```bash
-symfony server:start
+php bin/console server:start
 ```
 
-- Ouvrir un navigateur et accéder à l'URL suivante :
+- Access the app in your browser
 
 ```
 http://localhost:8000
 ```
 
-## Auteurs
+## Authors
 
 Léo Paillard
